@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Hardware gate: SM100 & Ascend 950 for DeepSeek DeepInfer | deepinfer.run</title>
-<meta name="description" content="Who can install DeepSeek DeepInfer: NVIDIA SM100, Huawei Ascend 950, CUDA 13, CANN 9.2, and skip conditions from the official README."/>
+<title>Hardware gate: SM100 & Ascend 950 | deepinfer.run</title>
+<meta name="description" content="Who can install DeepSeek DeepInfer: SM100, Ascend 950, CUDA 13, CANN 9.2."/>
 <link rel="canonical" href="https://deepinfer.run/blog/hardware-gate-sm100-ascend/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/blog/hardware-gate-sm100-ascend/"/>
@@ -13,35 +13,42 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/blog/hardware-gate-sm100-ascend/"/>
-<meta property="og:title" content="Hardware gate: SM100 & Ascend 950 for DeepSeek DeepInfer | deepinfer.run"/>
-<meta property="og:description" content="Who can install DeepSeek DeepInfer: NVIDIA SM100, Huawei Ascend 950, CUDA 13, CANN 9.2, and skip conditions from the official README."/>
+<meta property="og:title" content="Hardware gate: SM100 & Ascend 950 | deepinfer.run"/>
+<meta property="og:description" content="Who can install DeepSeek DeepInfer: SM100, Ascend 950, CUDA 13, CANN 9.2."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
-<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Hardware gate: SM100 & Ascend 950 for DeepSeek DeepInfer | deepinfer.run"/>
-<meta name="twitter:description" content="Who can install DeepSeek DeepInfer: NVIDIA SM100, Huawei Ascend 950, CUDA 13, CANN 9.2, and skip conditions from the official README."/>
+<meta name="twitter:title" content="Hardware gate: SM100 & Ascend 950 | deepinfer.run"/>
+<meta name="twitter:description" content="Who can install DeepSeek DeepInfer: SM100, Ascend 950, CUDA 13, CANN 9.2."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
 <link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
 </head>
 <body>
 <header class="site-header">
   <div class="wrap-wide header-inner">
     <a class="logo" href="/">
-      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
-      <span class="word">DeepInfer <span class="guide">Guide</span></span>
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
     <nav class="nav" id="site-nav">
-      <a href="/">Home</a>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
-      <a href="/vs-vllm/">vs vLLM</a>
-      <a href="/recipe/">Recipe</a>
       <a href="/blog/" aria-current="page">Blog</a>
-      <a href="/faq/">FAQ</a>
+      <details class="nav-more">
+        <summary>More</summary>
+        <div class="nav-more-panel">
+          <a href="/vs-vllm/">vs vLLM</a>
+          <a href="/recipe/">Recipe</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+      </details>
     </nav>
     <div class="nav-tools">
       <div class="lang-switch" aria-label="Language">
@@ -57,59 +64,47 @@
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Hardware gate</div>
     <h1>Hardware gate: SM100, Ascend 950, and who should skip</h1>
-    <p class="post-meta">2026-10-20 · Sources: <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">DeepInfer README</a></p>
+    <p class="post-meta">2026-10-20 · <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">DeepInfer README</a></p>
   </div></div>
-  <div class="wrap prose" style="padding-bottom:2.5rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
-<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
---><span>Sponsored slot (inactive)</span></aside>
-    <p>DeepInfer’s open-source release is explicit about accelerators. This post turns that list into a decision gate before you spend a day on <code class="inline-code">./build.sh</code>.</p>
+  <div class="wrap prose" style="padding-bottom:4rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
+    <p>Turn the README accelerator list into a decision gate before <code class="inline-code">./build.sh</code>.</p>
     <h2>Supported platforms</h2>
     <div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>Hardware</th><th>Software</th><th>Env</th></tr></thead>
       <tbody>
-        <tr><td>NVIDIA SM100 GPUs</td><td>CUDA 13 · GCC ≥ 13 · Python 3.12 · Linux</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=nvidia</code></td></tr>
-        <tr><td>Huawei Ascend 950 NPUs</td><td>CANN 9.2 · GCC ≥ 13 · Python 3.12 · Linux</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=ascend</code></td></tr>
+        <tr><td>NVIDIA SM100</td><td>CUDA 13 · GCC ≥ 13 · Python 3.12 · Linux</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=nvidia</code></td></tr>
+        <tr><td>Huawei Ascend 950</td><td>CANN 9.2 · GCC ≥ 13 · Python 3.12 · Linux</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=ascend</code></td></tr>
       </tbody>
     </table></div>
-    <h2>What “supported” does not mean</h2>
-    <p>It does not mean a turnkey multi-tenant API. Upstream lists components still required for a complete inference service:</p>
-    <ul>
-      <li>A KV cache system</li>
-      <li>VE / Prefill / Decode disaggregation (engine pieces largely present; full service not released)</li>
-      <li>Load balancing across data-parallel replicas for both prefill and decode</li>
-    </ul>
-    <h2>Decision checklist</h2>
+    <h2>Not a turnkey online API</h2>
+    <ul><li>KV cache system</li><li>VE / Prefill / Decode disaggregation service</li><li>DP load balancing for prefill and decode</li></ul>
+    <h2>Checklist</h2>
     <ul class="checklist">
-      <li>Confirm SM100 or Ascend 950 inventory</li>
-      <li>Confirm CUDA 13 or CANN 9.2 matching the card</li>
-      <li>Plan for offline V4.1-Flash only unless you bring serving glue</li>
-      <li>If you need agents → stop and open <a href="https://dshbase.com/">dshbase.com</a></li>
-      <li>If you need prompts/protocols only → <a href="/recipe/">deepseek-recipe</a></li>
+      <li>Confirm SM100 or Ascend 950</li>
+      <li>Confirm CUDA 13 or CANN 9.2</li>
+      <li>Plan offline V4.1-Flash unless you bring serving glue</li>
+      <li>Agents → <a href="https://dshbase.com/">dshbase</a> · protocols → <a href="/recipe/">recipe</a></li>
     </ul>
-    <h2>Upstream benchmark note</h2>
-    <p>Prefill Pareto: 4× SM100. Decode Pareto: 64× SM100. Each within one scale-up domain. Reproduce via <code class="inline-code">examples/sweep/run_sweep.sh</code> — don’t paste third-party tok/s claims into RFCs.</p>
-    <p>Next: <a href="/install/">install checklist</a> · <a href="/hardware/">hardware module</a>.</p>
+    <p>Prefill Pareto: 4× SM100. Decode: 64× SM100. Next: <a href="/install/">install</a> · <a href="/hardware/">hardware</a>.</p>
   </div>
 </main>
 <footer class="site-footer">
   <div class="wrap-wide footer-grid">
     <div>
-      <a class="logo" href="/" style="margin-bottom:.7rem">
-        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
-        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      <a class="logo" href="/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
       </a>
-      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
-        Guide for DeepSeek DeepInfer and deepseek-recipe.
-      </p>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">Guide for DeepSeek DeepInfer and deepseek-recipe.</p>
     </div>
     <div>
       <h4>Guide</h4>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
+      <a href="/blog/">Blog</a>
       <a href="/vs-vllm/">vs vLLM</a>
       <a href="/recipe/">Recipe</a>
-      <a href="/blog/">Blog</a>
       <a href="/faq/">FAQ</a>
     </div>
     <div>
@@ -122,7 +117,7 @@
   </div>
   <div class="wrap-wide footer-note">
     <p>Unofficial community guide · Not affiliated with DeepSeek</p>
-    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same DeepInfer engine.</p>
+    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same engine.</p>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>

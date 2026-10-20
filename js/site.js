@@ -16,9 +16,11 @@
     btn.addEventListener('click', async () => {
       const code = pre.querySelector('code')?.textContent || pre.textContent || '';
       try {
-        await navigator.clipboard.writeText(code.replace(/\nCopy$/,'').trim());
+        await navigator.clipboard.writeText(code.replace(/\nCopy$/, '').trim());
         btn.textContent = 'Copied';
-      } catch { btn.textContent = 'Failed'; }
+      } catch {
+        btn.textContent = 'Failed';
+      }
       setTimeout(() => { btn.textContent = 'Copy'; }, 1400);
     });
     pre.appendChild(btn);

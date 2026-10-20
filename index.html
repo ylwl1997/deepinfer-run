@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer — Install, Hardware, vs vLLM, deepseek-recipe | deepinfer.run</title>
-<meta name="description" content="Guide to DeepSeek DeepInfer (V4.1-Flash), supported hardware (SM100 / Ascend 950), deepseek-recipe, and how Prefill/Decode fit one engine."/>
+<title>DeepSeek DeepInfer — Install, Hardware, vs vLLM | deepinfer.run</title>
+<meta name="description" content="DeepSeek DeepInfer guide for V4.1-Flash: hardware (SM100 / Ascend 950), install, deepseek-recipe, and Prefill/Decode as one engine."/>
 <link rel="canonical" href="https://deepinfer.run/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/"/>
@@ -13,35 +13,42 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/"/>
-<meta property="og:title" content="DeepSeek DeepInfer — Install, Hardware, vs vLLM, deepseek-recipe | deepinfer.run"/>
-<meta property="og:description" content="Guide to DeepSeek DeepInfer (V4.1-Flash), supported hardware (SM100 / Ascend 950), deepseek-recipe, and how Prefill/Decode fit one engine."/>
+<meta property="og:title" content="DeepSeek DeepInfer — Install, Hardware, vs vLLM | deepinfer.run"/>
+<meta property="og:description" content="DeepSeek DeepInfer guide for V4.1-Flash: hardware (SM100 / Ascend 950), install, deepseek-recipe, and Prefill/Decode as one engine."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
-<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer — Install, Hardware, vs vLLM, deepseek-recipe | deepinfer.run"/>
-<meta name="twitter:description" content="Guide to DeepSeek DeepInfer (V4.1-Flash), supported hardware (SM100 / Ascend 950), deepseek-recipe, and how Prefill/Decode fit one engine."/>
+<meta name="twitter:title" content="DeepSeek DeepInfer — Install, Hardware, vs vLLM | deepinfer.run"/>
+<meta name="twitter:description" content="DeepSeek DeepInfer guide for V4.1-Flash: hardware (SM100 / Ascend 950), install, deepseek-recipe, and Prefill/Decode as one engine."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
 <link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
 </head>
 <body>
 <header class="site-header">
   <div class="wrap-wide header-inner">
     <a class="logo" href="/">
-      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
-      <span class="word">DeepInfer <span class="guide">Guide</span></span>
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
     <nav class="nav" id="site-nav">
-      <a href="/" aria-current="page">Home</a>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
-      <a href="/vs-vllm/">vs vLLM</a>
-      <a href="/recipe/">Recipe</a>
       <a href="/blog/">Blog</a>
-      <a href="/faq/">FAQ</a>
+      <details class="nav-more">
+        <summary>More</summary>
+        <div class="nav-more-panel">
+          <a href="/vs-vllm/">vs vLLM</a>
+          <a href="/recipe/">Recipe</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+      </details>
     </nav>
     <div class="nav-tools">
       <div class="lang-switch" aria-label="Language">
@@ -54,37 +61,47 @@
 </header>
 
 <main>
-  <section class="hero">
-    <div class="wrap-wide">
-      <h1>DeepSeek <span class="grad">DeepInfer</span> — production inference, explained</h1>
-      <p class="hero-lead">High-performance inference for DeepSeek-V4.1-Flash. Open-source offline release with the core features used at scale — distinct from deepseek-recipe protocols and the DeepSeek Harness agent runtime.</p>
+  <section class="hero"><div class="wrap-wide hero-grid">
+    <div>
+      <h1>DeepSeek <span class="kw">DeepInfer</span> for production inference</h1>
+      <p class="hero-lead">Offline inference engine for DeepSeek-V4.1-Flash on SM100 and Ascend 950. Separate from deepseek-recipe protocols and the DeepSeek Harness agent runtime.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer on GitHub</a>
         <a class="btn btn-secondary" href="/install/">Install checklist</a>
-        <a class="btn btn-ghost" href="/hardware/">Hardware gate →</a>
       </div>
     </div>
-  </section>
+    <aside class="hero-panel" aria-label="At a glance">
+      <h3>At a glance</h3>
+      <dl>
+        <div><dt>Model</dt><dd>DeepSeek-V4.1-Flash</dd></div>
+        <div><dt>Hardware</dt><dd>NVIDIA SM100 · Huawei Ascend 950</dd></div>
+        <div><dt>License</dt><dd>Apache 2.0</dd></div>
+        <div><dt>Scope</dt><dd>Offline inference release</dd></div>
+      </dl>
+    </aside>
+  </div></section>
+
   <section class="section"><div class="wrap-wide">
     <div class="section-head">
       <h2>Three layers</h2>
       <p>DeepInfer, deepseek-recipe, and DeepSeek Harness solve different problems. Prefill and Decode are phases of the same engine.</p>
     </div>
     <div class="grid-3">
-      <article class="card"><span class="tag tag-primary">Engine</span><h3>DeepInfer</h3>
-        <p>Production inference framework. Offline path for <strong>DeepSeek-V4.1-Flash</strong>.</p>
+      <article class="card"><span class="tag tag-accent">Engine</span><h3>DeepInfer</h3>
+        <p>Production inference framework. Offline path for DeepSeek-V4.1-Flash.</p>
         <ul><li>SM100 · Ascend 950</li><li>Apache 2.0</li></ul>
-        <p style="margin-top:.8rem"><a href="/hardware/">Hardware details →</a></p></article>
-      <article class="card"><span class="tag tag-secondary">Protocols</span><h3>deepseek-recipe</h3>
-        <p>Request conversion, prompts, tokenization. <strong>Does not run inference.</strong></p>
+        <p style="margin-top:.85rem"><a href="/hardware/">Hardware details →</a></p></article>
+      <article class="card"><span class="tag">Protocols</span><h3>deepseek-recipe</h3>
+        <p>Request conversion, prompts, tokenization. Does not run inference.</p>
         <ul><li><code class="inline-code">pip install deepseek-recipe</code></li><li>MIT</li></ul>
-        <p style="margin-top:.8rem"><a href="/recipe/">Recipe guide →</a></p></article>
-      <article class="card"><span class="tag tag-link">Agents</span><h3>DeepSeek Harness</h3>
-        <p>Agent runtime — not this site’s focus.</p>
+        <p style="margin-top:.85rem"><a href="/recipe/">Recipe guide →</a></p></article>
+      <article class="card"><span class="tag">Agents</span><h3>DeepSeek Harness</h3>
+        <p>Agent runtime — covered on dshbase, not this site’s focus.</p>
         <ul><li><a href="https://dshbase.com/">dshbase.com</a></li>
-        <li><a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DeepInfer for DSH readers</a></li></ul></article>
+        <li><a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">Note for DSH readers</a></li></ul></article>
     </div>
   </div></section>
+
   <section class="section"><div class="wrap-wide">
     <div class="section-head"><h2>Quick comparison</h2></div>
     <div class="table-wrap"><table>
@@ -96,20 +113,21 @@
         <tr><td><strong>Prefill / Decode</strong></td><td>Two phases of the same engine</td><td class="partial">Same product</td><td>—</td><td><a href="/faq/">FAQ</a></td></tr>
       </tbody>
     </table></div>
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
-<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
---><span>Sponsored slot (inactive)</span></aside>
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
   </div></section>
+
   <section class="section"><div class="wrap-wide">
-    <div class="section-head"><h2>Who should not install</h2>
-      <p>Skip the build if any of these match — see also the <a href="/hardware/">hardware gate</a>.</p></div>
+    <div class="section-head">
+      <h2>Who should skip — and who should install</h2>
+      <p>See also the <a href="/hardware/">hardware gate</a>.</p>
+    </div>
     <div class="grid-2">
       <div class="card"><h3>Skip if you…</h3><ul>
         <li>Only need the hosted DeepSeek API</li>
         <li>Want an agent harness → <a href="https://dshbase.com/">DSH</a></li>
         <li>Need protocols only → <a href="/recipe/">recipe</a></li>
-        <li>Don’t have <strong>SM100</strong> or <strong>Ascend 950</strong></li>
-        <li>Need full online serving (KV cache, PD disaggregation, DP load balancing — not in this release)</li>
+        <li>Don’t have SM100 or Ascend 950</li>
+        <li>Need full online serving (KV cache, PD disaggregation, DP LB — not in this release)</li>
       </ul></div>
       <div class="card"><h3>Install if you…</h3><ul>
         <li>Run offline DeepSeek-V4.1-Flash</li>
@@ -119,36 +137,33 @@
       <p style="margin-top:1rem"><a class="btn btn-primary" href="/install/">Open install guide</a></p></div>
     </div>
   </div></section>
+
   <section class="section"><div class="wrap-wide">
-    <div class="section-head"><h2>Explore</h2></div>
+    <div class="section-head"><h2>Continue</h2></div>
     <div class="related">
       <a class="card" href="/hardware/"><h3>Hardware</h3><p>SM100 / Ascend 950, prerequisites, not-included serving pieces.</p></a>
-      <a class="card" href="/install/"><h3>Install</h3><p>Build checklist from the official README.</p></a>
-      <a class="card" href="/blog/"><h3>Blog</h3><p>Hardware gate &amp; Prefill/Decode deep dives.</p></a>
+      <a class="card" href="/blog/"><h3>Blog</h3><p>Hardware gate and Prefill/Decode deep dives.</p></a>
       <a class="card" href="/vs-vllm/"><h3>vs vLLM</h3><p>Included vs not included vs API.</p></a>
       <a class="card" href="/recipe/"><h3>Recipe</h3><p>Protocols stacked with the engine.</p></a>
-      <a class="card" href="/faq/"><h3>FAQ</h3><p>Name collision, offline scope, vs DSH.</p></a>
     </div>
   </div></section>
 </main>
 <footer class="site-footer">
   <div class="wrap-wide footer-grid">
     <div>
-      <a class="logo" href="/" style="margin-bottom:.7rem">
-        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
-        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      <a class="logo" href="/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
       </a>
-      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
-        Guide for DeepSeek DeepInfer and deepseek-recipe.
-      </p>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">Guide for DeepSeek DeepInfer and deepseek-recipe.</p>
     </div>
     <div>
       <h4>Guide</h4>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
+      <a href="/blog/">Blog</a>
       <a href="/vs-vllm/">vs vLLM</a>
       <a href="/recipe/">Recipe</a>
-      <a href="/blog/">Blog</a>
       <a href="/faq/">FAQ</a>
     </div>
     <div>
@@ -161,7 +176,7 @@
   </div>
   <div class="wrap-wide footer-note">
     <p>Unofficial community guide · Not affiliated with DeepSeek</p>
-    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same DeepInfer engine.</p>
+    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same engine.</p>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>

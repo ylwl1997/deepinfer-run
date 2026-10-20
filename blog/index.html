@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer blog — hardware gate, Prefill/Decode | deepinfer.run</title>
-<meta name="description" content="DeepSeek DeepInfer guides: SM100/Ascend hardware gate and Prefill vs Decode with the three-layer stack."/>
+<title>DeepSeek DeepInfer blog | deepinfer.run</title>
+<meta name="description" content="DeepSeek DeepInfer guides: hardware gate and Prefill vs Decode."/>
 <link rel="canonical" href="https://deepinfer.run/blog/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/blog/"/>
@@ -13,35 +13,42 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/blog/"/>
-<meta property="og:title" content="DeepSeek DeepInfer blog — hardware gate, Prefill/Decode | deepinfer.run"/>
-<meta property="og:description" content="DeepSeek DeepInfer guides: SM100/Ascend hardware gate and Prefill vs Decode with the three-layer stack."/>
+<meta property="og:title" content="DeepSeek DeepInfer blog | deepinfer.run"/>
+<meta property="og:description" content="DeepSeek DeepInfer guides: hardware gate and Prefill vs Decode."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
-<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer blog — hardware gate, Prefill/Decode | deepinfer.run"/>
-<meta name="twitter:description" content="DeepSeek DeepInfer guides: SM100/Ascend hardware gate and Prefill vs Decode with the three-layer stack."/>
+<meta name="twitter:title" content="DeepSeek DeepInfer blog | deepinfer.run"/>
+<meta name="twitter:description" content="DeepSeek DeepInfer guides: hardware gate and Prefill vs Decode."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
 <link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
 </head>
 <body>
 <header class="site-header">
   <div class="wrap-wide header-inner">
     <a class="logo" href="/">
-      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
-      <span class="word">DeepInfer <span class="guide">Guide</span></span>
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
     <nav class="nav" id="site-nav">
-      <a href="/">Home</a>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
-      <a href="/vs-vllm/">vs vLLM</a>
-      <a href="/recipe/">Recipe</a>
       <a href="/blog/" aria-current="page">Blog</a>
-      <a href="/faq/">FAQ</a>
+      <details class="nav-more">
+        <summary>More</summary>
+        <div class="nav-more-panel">
+          <a href="/vs-vllm/">vs vLLM</a>
+          <a href="/recipe/">Recipe</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+      </details>
     </nav>
     <div class="nav-tools">
       <div class="lang-switch" aria-label="Language">
@@ -57,22 +64,20 @@
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/">Home</a> / <a href="/blog/">Blog</a></div>
     <h1>Blog</h1>
-    <p>Thick notes with tables and upstream links — not thin announcements.</p>
+    <p>Thick notes with tables and upstream links.</p>
   </div></div>
-  <div class="wrap" style="padding-bottom:2.5rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
-<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
---><span>Sponsored slot (inactive)</span></aside>
+  <div class="wrap" style="padding-bottom:4rem;max-width:var(--wrap)">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
     <div class="blog-list">
       <a class="blog-item" href="/blog/hardware-gate-sm100-ascend/">
         <div class="meta">2026-10-20 · Hardware</div>
-        <h2>Hardware gate: SM100, Ascend 950, and who should skip DeepInfer</h2>
-        <p>Supported accelerators, CUDA 13 / CANN 9.2, missing serving pieces, and a concrete skip checklist.</p>
+        <h2>Hardware gate: SM100, Ascend 950, and who should skip</h2>
+        <p>Supported accelerators, CUDA 13 / CANN 9.2, missing serving pieces, skip checklist.</p>
       </a>
       <a class="blog-item" href="/blog/prefill-decode-three-layers/">
         <div class="meta">2026-10-20 · Architecture</div>
-        <h2>Prefill vs Decode — and the three layers next to deepseek-recipe &amp; DSH</h2>
-        <p>Same engine, two phases. How recipe and Harness sit beside DeepInfer without duplicating the dshbase note.</p>
+        <h2>Prefill vs Decode — and the three layers</h2>
+        <p>Same engine, two phases. Recipe and Harness beside DeepInfer; links to dshbase.</p>
       </a>
     </div>
   </div>
@@ -80,21 +85,19 @@
 <footer class="site-footer">
   <div class="wrap-wide footer-grid">
     <div>
-      <a class="logo" href="/" style="margin-bottom:.7rem">
-        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
-        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      <a class="logo" href="/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
       </a>
-      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
-        Guide for DeepSeek DeepInfer and deepseek-recipe.
-      </p>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">Guide for DeepSeek DeepInfer and deepseek-recipe.</p>
     </div>
     <div>
       <h4>Guide</h4>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
+      <a href="/blog/">Blog</a>
       <a href="/vs-vllm/">vs vLLM</a>
       <a href="/recipe/">Recipe</a>
-      <a href="/blog/">Blog</a>
       <a href="/faq/">FAQ</a>
     </div>
     <div>
@@ -107,7 +110,7 @@
   </div>
   <div class="wrap-wide footer-note">
     <p>Unofficial community guide · Not affiliated with DeepSeek</p>
-    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same DeepInfer engine.</p>
+    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same engine.</p>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>

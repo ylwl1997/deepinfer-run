@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer FAQ — 离线范围、与 DSH、Prefill | deepinfer.run</title>
-<meta name="description" content="FAQ：与医疗站 deepinfer.org 的名称区分、离线开源范围、DeepSeek Harness、Prefill/Decode 同属一引擎。"/>
+<title>DeepSeek DeepInfer FAQ | deepinfer.run</title>
+<meta name="description" content="FAQ：离线范围、与 DSH、Prefill/Decode，以及与医疗站 deepinfer.org 的区分。"/>
 <link rel="canonical" href="https://deepinfer.run/zh/faq/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/faq/"/>
@@ -13,35 +13,42 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="zh_CN"/>
 <meta property="og:url" content="https://deepinfer.run/zh/faq/"/>
-<meta property="og:title" content="DeepSeek DeepInfer FAQ — 离线范围、与 DSH、Prefill | deepinfer.run"/>
-<meta property="og:description" content="FAQ：与医疗站 deepinfer.org 的名称区分、离线开源范围、DeepSeek Harness、Prefill/Decode 同属一引擎。"/>
+<meta property="og:title" content="DeepSeek DeepInfer FAQ | deepinfer.run"/>
+<meta property="og:description" content="FAQ：离线范围、与 DSH、Prefill/Decode，以及与医疗站 deepinfer.org 的区分。"/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
-<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer FAQ — 离线范围、与 DSH、Prefill | deepinfer.run"/>
-<meta name="twitter:description" content="FAQ：与医疗站 deepinfer.org 的名称区分、离线开源范围、DeepSeek Harness、Prefill/Decode 同属一引擎。"/>
+<meta name="twitter:title" content="DeepSeek DeepInfer FAQ | deepinfer.run"/>
+<meta name="twitter:description" content="FAQ：离线范围、与 DSH、Prefill/Decode，以及与医疗站 deepinfer.org 的区分。"/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
 <link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
 </head>
 <body>
 <header class="site-header">
   <div class="wrap-wide header-inner">
     <a class="logo" href="/zh/">
-      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
-      <span class="word">DeepInfer</span>
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
     <nav class="nav" id="site-nav">
-      <a href="/zh/">首页</a>
       <a href="/zh/install/">安装</a>
       <a href="/zh/hardware/">硬件</a>
-      <a href="/zh/vs-vllm/">对比 vLLM</a>
-      <a href="/zh/recipe/">Recipe</a>
       <a href="/zh/blog/">博客</a>
-      <a href="/zh/faq/" aria-current="page">FAQ</a>
+      <details class="nav-more" open>
+        <summary>更多</summary>
+        <div class="nav-more-panel">
+          <a href="/zh/vs-vllm/">对比 vLLM</a>
+          <a href="/zh/recipe/">Recipe</a>
+          <a href="/zh/faq/" aria-current="page">FAQ</a>
+        </div>
+      </details>
     </nav>
     <div class="nav-tools">
       <div class="lang-switch" aria-label="Language">
@@ -59,24 +66,22 @@
     <h1>FAQ</h1>
     <p>简答，并指向官方来源。</p>
   </div></div>
-  <div class="wrap prose" style="padding-bottom:2.5rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
-<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
---><span>Sponsored slot (inactive)</span></aside>
-    <h2>DeepInfer、deepseek-recipe、DSH 如何区分？</h2>
+  <div class="wrap prose" style="padding-bottom:4rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
+    <h2>DeepInfer、recipe、DSH？</h2>
     <ul>
-      <li><strong>DeepInfer</strong> — 推理引擎（本开源版本：离线 V4.1-Flash）。</li>
+      <li><strong>DeepInfer</strong> — 推理引擎（离线 V4.1-Flash）。</li>
       <li><strong>deepseek-recipe</strong> — 协议层；不执行推理。</li>
-      <li><strong>DeepSeek Harness</strong> — 智能体运行时 · <a href="https://dshbase.com/">dshbase.com</a> · <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">给 DSH 读者的说明</a>。</li>
+      <li><strong>DeepSeek Harness</strong> — 智能体 · <a href="https://dshbase.com/">dshbase</a> · <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">说明</a>。</li>
     </ul>
     <h2>Prefill 是第二个产品吗？</h2>
-    <p><strong>不是。</strong>Prefill 与 Decode 是同一 DeepInfer 引擎的两个阶段。</p>
-    <h2>「离线」覆盖什么？</h2>
-    <p>核心推理能力，不含完整生产服务壳。完整在线服务仍缺：KV cache、完整 PD 分离服务、DP 负载均衡。</p>
-    <h2>硬件与模型？</h2>
-    <p>SM100 与 Ascend 950。模型：DeepSeek-V4.1-Flash。详见 <a href="/zh/hardware/">硬件</a> 与 <a href="/zh/install/">安装</a>。</p>
-    <h2>会与医疗站 deepinfer.org 混淆吗？</h2>
-    <p>两者无关。标题使用 «DeepSeek DeepInfer»，规范域名为 <code class="inline-code">https://deepinfer.run</code>，便于区分搜索意图。</p>
+    <p><strong>不是。</strong>同一引擎的两个阶段。</p>
+    <h2>离线范围？</h2>
+    <p>核心推理，不含完整生产服务壳。仍缺：KV cache、完整 PD 分离服务、DP 负载均衡。</p>
+    <h2>硬件 / 模型？</h2>
+    <p>SM100 与 Ascend 950 · DeepSeek-V4.1-Flash。见 <a href="/zh/hardware/">硬件</a>。</p>
+    <h2>与医疗站 deepinfer.org？</h2>
+    <p>无关。标题使用 «DeepSeek DeepInfer»；规范域名为 deepinfer.run。</p>
     <h2>许可证？</h2>
     <p>DeepInfer Apache-2.0 · deepseek-recipe MIT。</p>
   </div>
@@ -84,21 +89,19 @@
 <footer class="site-footer">
   <div class="wrap-wide footer-grid">
     <div>
-      <a class="logo" href="/zh/" style="margin-bottom:.7rem">
-        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
-        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      <a class="logo" href="/zh/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
       </a>
-      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
-        DeepSeek DeepInfer 与 deepseek-recipe 指南。
-      </p>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">DeepSeek DeepInfer 与 deepseek-recipe 指南。</p>
     </div>
     <div>
       <h4>指南</h4>
       <a href="/zh/install/">安装</a>
       <a href="/zh/hardware/">硬件</a>
+      <a href="/zh/blog/">博客</a>
       <a href="/zh/vs-vllm/">对比 vLLM</a>
       <a href="/zh/recipe/">Recipe</a>
-      <a href="/zh/blog/">博客</a>
       <a href="/zh/faq/">FAQ</a>
     </div>
     <div>
@@ -111,7 +114,7 @@
   </div>
   <div class="wrap-wide footer-note">
     <p>非官方社区指南 · 与 DeepSeek 无隶属关系</p>
-    <p>上游项目：DeepInfer（Apache-2.0）· deepseek-recipe（MIT）。Prefill 与 Decode 是同一 DeepInfer 引擎的两个阶段。</p>
+    <p>上游：DeepInfer（Apache-2.0）· deepseek-recipe（MIT）。Prefill 与 Decode 是同一引擎的两个阶段。</p>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>

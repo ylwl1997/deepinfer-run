@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer vs vLLM, SGLang & official API | deepinfer.run</title>
-<meta name="description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official API. Included / not included from the open-source release."/>
+<title>DeepSeek DeepInfer vs vLLM, SGLang & API | deepinfer.run</title>
+<meta name="description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official API."/>
 <link rel="canonical" href="https://deepinfer.run/vs-vllm/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/vs-vllm/"/>
@@ -13,35 +13,42 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/vs-vllm/"/>
-<meta property="og:title" content="DeepSeek DeepInfer vs vLLM, SGLang & official API | deepinfer.run"/>
-<meta property="og:description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official API. Included / not included from the open-source release."/>
+<meta property="og:title" content="DeepSeek DeepInfer vs vLLM, SGLang & API | deepinfer.run"/>
+<meta property="og:description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official API."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
-<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer vs vLLM, SGLang & official API | deepinfer.run"/>
-<meta name="twitter:description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official API. Included / not included from the open-source release."/>
+<meta name="twitter:title" content="DeepSeek DeepInfer vs vLLM, SGLang & API | deepinfer.run"/>
+<meta name="twitter:description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official API."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
 <link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
 </head>
 <body>
 <header class="site-header">
   <div class="wrap-wide header-inner">
     <a class="logo" href="/">
-      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
-      <span class="word">DeepInfer <span class="guide">Guide</span></span>
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
     <nav class="nav" id="site-nav">
-      <a href="/">Home</a>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
-      <a href="/vs-vllm/" aria-current="page">vs vLLM</a>
-      <a href="/recipe/">Recipe</a>
       <a href="/blog/">Blog</a>
-      <a href="/faq/">FAQ</a>
+      <details class="nav-more" open>
+        <summary>More</summary>
+        <div class="nav-more-panel">
+          <a href="/vs-vllm/" aria-current="page">vs vLLM</a>
+          <a href="/recipe/">Recipe</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+      </details>
     </nav>
     <div class="nav-tools">
       <div class="lang-switch" aria-label="Language">
@@ -56,58 +63,42 @@
 <main>
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/">Home</a> / <a href="/vs-vllm/">vs vLLM</a></div>
-    <h1>DeepSeek DeepInfer vs vLLM / SGLang / API</h1>
-    <p>Upstream acknowledgments: DeepInfer was built primarily on vLLM, with inspiration from SGLang and TensorRT-LLM. This page is about fit.</p>
+    <h1>vs vLLM / SGLang / API</h1>
+    <p>Upstream: built primarily on vLLM, with inspiration from SGLang and TensorRT-LLM. This page is about fit.</p>
   </div></div>
-  <div class="wrap prose" style="padding-bottom:2.5rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
-<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
---><span>Sponsored slot (inactive)</span></aside>
-    <h2>At a glance</h2>
+  <div class="wrap prose" style="padding-bottom:4rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
     <div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>Option</th><th>Best when</th><th>Offline V4.1-Flash?</th></tr></thead>
       <tbody>
-        <tr><td><strong>DeepInfer</strong></td><td>SM100 / Ascend 950 + DeepSeek production offline path</td><td class="yes">Yes</td></tr>
+        <tr><td><strong>DeepInfer</strong></td><td>SM100 / Ascend 950 + DeepSeek offline path</td><td class="yes">Yes</td></tr>
         <tr><td><strong>vLLM / SGLang</strong></td><td>Broader model zoo or other accelerators</td><td class="partial">Depends</td></tr>
         <tr><td><strong>Official API</strong></td><td>Hosted inference, no GPU ops</td><td class="no">Hosted</td></tr>
       </tbody>
     </table></div>
     <h2>Included</h2>
-    <ul class="checklist">
-      <li>Offline DeepSeek-V4.1-Flash</li>
-      <li>Optimized kernels, DP/CP/EP parallelism</li>
-      <li>DSpark, SWA bounded replay, async scheduling</li>
-      <li>Batch-invariant / deterministic flags (NVIDIA)</li>
-      <li>Structured outputs</li>
-    </ul>
+    <ul class="checklist"><li>Offline V4.1-Flash</li><li>Optimized kernels, DP/CP/EP</li><li>DSpark, SWA replay, async scheduling</li><li>Structured outputs</li></ul>
     <h2>Not included</h2>
-    <ul class="checklist">
-      <li>KV cache system</li>
-      <li>Complete Prefill/Decode disaggregation service</li>
-      <li>DP load balancing for prefill and decode</li>
-      <li>Agent orchestration (→ DSH) or protocol facade (→ recipe)</li>
-    </ul>
-    <div class="callout"><strong>Prefill ≠ product.</strong> Two phases of one engine. See <a href="/faq/">FAQ</a> and <a href="/blog/prefill-decode-three-layers/">blog</a>.</div>
+    <ul class="checklist"><li>KV cache system</li><li>Complete PD disaggregation service</li><li>DP load balancing</li><li>Agents (DSH) or protocols (recipe)</li></ul>
+    <div class="callout"><strong>Prefill ≠ product.</strong> Two phases of one engine — <a href="/blog/prefill-decode-three-layers/">blog</a>.</div>
   </div>
 </main>
 <footer class="site-footer">
   <div class="wrap-wide footer-grid">
     <div>
-      <a class="logo" href="/" style="margin-bottom:.7rem">
-        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
-        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      <a class="logo" href="/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
       </a>
-      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
-        Guide for DeepSeek DeepInfer and deepseek-recipe.
-      </p>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">Guide for DeepSeek DeepInfer and deepseek-recipe.</p>
     </div>
     <div>
       <h4>Guide</h4>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
+      <a href="/blog/">Blog</a>
       <a href="/vs-vllm/">vs vLLM</a>
       <a href="/recipe/">Recipe</a>
-      <a href="/blog/">Blog</a>
       <a href="/faq/">FAQ</a>
     </div>
     <div>
@@ -120,7 +111,7 @@
   </div>
   <div class="wrap-wide footer-note">
     <p>Unofficial community guide · Not affiliated with DeepSeek</p>
-    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same DeepInfer engine.</p>
+    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same engine.</p>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>

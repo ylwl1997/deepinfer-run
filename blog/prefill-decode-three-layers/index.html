@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Prefill vs Decode and three layers: DeepInfer, recipe, DSH | deepinfer.run</title>
-<meta name="description" content="Prefill and Decode are two phases of DeepSeek DeepInfer. How deepseek-recipe and DeepSeek Harness sit beside the engine — with links to the dshbase note."/>
+<title>Prefill vs Decode and three layers | deepinfer.run</title>
+<meta name="description" content="Prefill and Decode are two phases of DeepSeek DeepInfer. How recipe and DSH sit beside the engine."/>
 <link rel="canonical" href="https://deepinfer.run/blog/prefill-decode-three-layers/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/blog/prefill-decode-three-layers/"/>
@@ -13,35 +13,42 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/blog/prefill-decode-three-layers/"/>
-<meta property="og:title" content="Prefill vs Decode and three layers: DeepInfer, recipe, DSH | deepinfer.run"/>
-<meta property="og:description" content="Prefill and Decode are two phases of DeepSeek DeepInfer. How deepseek-recipe and DeepSeek Harness sit beside the engine — with links to the dshbase note."/>
+<meta property="og:title" content="Prefill vs Decode and three layers | deepinfer.run"/>
+<meta property="og:description" content="Prefill and Decode are two phases of DeepSeek DeepInfer. How recipe and DSH sit beside the engine."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
-<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Prefill vs Decode and three layers: DeepInfer, recipe, DSH | deepinfer.run"/>
-<meta name="twitter:description" content="Prefill and Decode are two phases of DeepSeek DeepInfer. How deepseek-recipe and DeepSeek Harness sit beside the engine — with links to the dshbase note."/>
+<meta name="twitter:title" content="Prefill vs Decode and three layers | deepinfer.run"/>
+<meta name="twitter:description" content="Prefill and Decode are two phases of DeepSeek DeepInfer. How recipe and DSH sit beside the engine."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
 <link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
 </head>
 <body>
 <header class="site-header">
   <div class="wrap-wide header-inner">
     <a class="logo" href="/">
-      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
-      <span class="word">DeepInfer <span class="guide">Guide</span></span>
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
     <nav class="nav" id="site-nav">
-      <a href="/">Home</a>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
-      <a href="/vs-vllm/">vs vLLM</a>
-      <a href="/recipe/">Recipe</a>
       <a href="/blog/" aria-current="page">Blog</a>
-      <a href="/faq/">FAQ</a>
+      <details class="nav-more">
+        <summary>More</summary>
+        <div class="nav-more-panel">
+          <a href="/vs-vllm/">vs vLLM</a>
+          <a href="/recipe/">Recipe</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+      </details>
     </nav>
     <div class="nav-tools">
       <div class="lang-switch" aria-label="Language">
@@ -57,58 +64,48 @@
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Prefill / Decode</div>
     <h1>Prefill vs Decode — and the three layers</h1>
-    <p class="post-meta">2026-10-20 · Cross-link: <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DeepInfer for DSH readers (dshbase)</a></p>
+    <p class="post-meta">2026-10-20 · <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">dshbase note for DSH readers</a></p>
   </div></div>
-  <div class="wrap prose" style="padding-bottom:2.5rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
-<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
---><span>Sponsored slot (inactive)</span></aside>
-    <p>People sometimes read the Prefill and Decode charts as two products. Upstream measures both on DeepInfer — different phases, different GPU counts in the published sweeps, one engine.</p>
+  <div class="wrap prose" style="padding-bottom:4rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
+    <p>Prefill and Decode charts are two phases of one engine — not two products.</p>
     <h2>One engine, two phases</h2>
     <div class="table-wrap" style="margin:1rem 0"><table>
-      <thead><tr><th>Phase</th><th>What it stresses</th><th>README sweep note</th></tr></thead>
+      <thead><tr><th>Phase</th><th>Focus</th><th>README sweep</th></tr></thead>
       <tbody>
-        <tr><td><strong>Prefill</strong></td><td>Non-cached input throughput vs latency</td><td>Measured on 4 SM100 GPUs (one scale-up domain)</td></tr>
-        <tr><td><strong>Decode</strong></td><td>Output throughput vs per-user speed</td><td>Measured on 64 SM100 GPUs (one scale-up domain)</td></tr>
+        <tr><td><strong>Prefill</strong></td><td>Input throughput vs latency</td><td>4 SM100 · one scale-up domain</td></tr>
+        <tr><td><strong>Decode</strong></td><td>Output throughput vs per-user speed</td><td>64 SM100 · one scale-up domain</td></tr>
       </tbody>
     </table></div>
-    <p>Disaggregation of Prefill/Decode into a full service is called out as <em>not included</em> in the open-source release, even though much engine functionality already exists.</p>
-    <h2>Three layers (don’t collapse them)</h2>
+    <p>Full Prefill/Decode disaggregation service is <em>not included</em> in the open-source release.</p>
+    <h2>Three layers</h2>
     <div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>Layer</th><th>Job</th><th>Infers?</th></tr></thead>
       <tbody>
-        <tr><td><strong>DeepInfer</strong></td><td>Run V4.1-Flash offline on supported HW</td><td class="yes">Yes</td></tr>
-        <tr><td><strong>deepseek-recipe</strong></td><td>Protocols, prompts, tokenizer</td><td class="no">No</td></tr>
-        <tr><td><strong>DeepSeek Harness</strong></td><td>Agent runtime / plugins</td><td class="no">N/A</td></tr>
+        <tr><td><strong>DeepInfer</strong></td><td>Run V4.1-Flash offline</td><td class="yes">Yes</td></tr>
+        <tr><td><strong>deepseek-recipe</strong></td><td>Protocols / prompts / tokenizer</td><td class="no">No</td></tr>
+        <tr><td><strong>DeepSeek Harness</strong></td><td>Agent runtime</td><td class="no">N/A</td></tr>
       </tbody>
     </table></div>
-    <h2>How this relates to dshbase</h2>
-    <p>If you arrived from the agent side, read the dshbase primer first — it explains why DeepInfer matters to Harness readers without turning this page into a second agent tutorial:</p>
-    <ul>
-      <li><a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">EN · DeepInfer open source for DSH readers</a></li>
-      <li><a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">ZH · 同主题</a></li>
-    </ul>
-    <p>Then come back for engine specifics: <a href="/hardware/">hardware</a>, <a href="/install/">install</a>, <a href="/recipe/">recipe</a>.</p>
+    <p>From the agent side, read dshbase first, then return for <a href="/hardware/">hardware</a>, <a href="/install/">install</a>, <a href="/recipe/">recipe</a>.</p>
   </div>
 </main>
 <footer class="site-footer">
   <div class="wrap-wide footer-grid">
     <div>
-      <a class="logo" href="/" style="margin-bottom:.7rem">
-        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
-        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      <a class="logo" href="/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
       </a>
-      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
-        Guide for DeepSeek DeepInfer and deepseek-recipe.
-      </p>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">Guide for DeepSeek DeepInfer and deepseek-recipe.</p>
     </div>
     <div>
       <h4>Guide</h4>
       <a href="/install/">Install</a>
       <a href="/hardware/">Hardware</a>
+      <a href="/blog/">Blog</a>
       <a href="/vs-vllm/">vs vLLM</a>
       <a href="/recipe/">Recipe</a>
-      <a href="/blog/">Blog</a>
       <a href="/faq/">FAQ</a>
     </div>
     <div>
@@ -121,7 +118,7 @@
   </div>
   <div class="wrap-wide footer-note">
     <p>Unofficial community guide · Not affiliated with DeepSeek</p>
-    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same DeepInfer engine.</p>
+    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same engine.</p>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>

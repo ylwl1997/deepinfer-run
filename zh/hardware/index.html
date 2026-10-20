@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer 硬件 — SM100、Ascend 950、CUDA 13、CANN 9.2 | deepinfer.run</title>
-<meta name="description" content="DeepSeek DeepInfer 支持硬件：NVIDIA SM100 与华为 Ascend 950。前置条件、未包含的服务组件与跳过条件（来自官方 README）。"/>
+<title>DeepSeek DeepInfer 硬件 — SM100、Ascend 950 | deepinfer.run</title>
+<meta name="description" content="DeepSeek DeepInfer 支持硬件：NVIDIA SM100 与华为 Ascend 950。前置条件与跳过条件（官方 README）。"/>
 <link rel="canonical" href="https://deepinfer.run/zh/hardware/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/hardware/"/>
@@ -13,35 +13,42 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="zh_CN"/>
 <meta property="og:url" content="https://deepinfer.run/zh/hardware/"/>
-<meta property="og:title" content="DeepSeek DeepInfer 硬件 — SM100、Ascend 950、CUDA 13、CANN 9.2 | deepinfer.run"/>
-<meta property="og:description" content="DeepSeek DeepInfer 支持硬件：NVIDIA SM100 与华为 Ascend 950。前置条件、未包含的服务组件与跳过条件（来自官方 README）。"/>
+<meta property="og:title" content="DeepSeek DeepInfer 硬件 — SM100、Ascend 950 | deepinfer.run"/>
+<meta property="og:description" content="DeepSeek DeepInfer 支持硬件：NVIDIA SM100 与华为 Ascend 950。前置条件与跳过条件（官方 README）。"/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
-<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer 硬件 — SM100、Ascend 950、CUDA 13、CANN 9.2 | deepinfer.run"/>
-<meta name="twitter:description" content="DeepSeek DeepInfer 支持硬件：NVIDIA SM100 与华为 Ascend 950。前置条件、未包含的服务组件与跳过条件（来自官方 README）。"/>
+<meta name="twitter:title" content="DeepSeek DeepInfer 硬件 — SM100、Ascend 950 | deepinfer.run"/>
+<meta name="twitter:description" content="DeepSeek DeepInfer 支持硬件：NVIDIA SM100 与华为 Ascend 950。前置条件与跳过条件（官方 README）。"/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
 <link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
 </head>
 <body>
 <header class="site-header">
   <div class="wrap-wide header-inner">
     <a class="logo" href="/zh/">
-      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
-      <span class="word">DeepInfer</span>
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
     <nav class="nav" id="site-nav">
-      <a href="/zh/">首页</a>
       <a href="/zh/install/">安装</a>
       <a href="/zh/hardware/" aria-current="page">硬件</a>
-      <a href="/zh/vs-vllm/">对比 vLLM</a>
-      <a href="/zh/recipe/">Recipe</a>
       <a href="/zh/blog/">博客</a>
-      <a href="/zh/faq/">FAQ</a>
+      <details class="nav-more">
+        <summary>更多</summary>
+        <div class="nav-more-panel">
+          <a href="/zh/vs-vllm/">对比 vLLM</a>
+          <a href="/zh/recipe/">Recipe</a>
+          <a href="/zh/faq/">FAQ</a>
+        </div>
+      </details>
     </nav>
     <div class="nav-tools">
       <div class="lang-switch" aria-label="Language">
@@ -56,72 +63,63 @@
 <main>
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/zh/">首页</a> / <a href="/zh/hardware/">硬件</a></div>
-    <h1>DeepSeek DeepInfer 硬件门槛</h1>
-    <p>仅依据 <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">官方 README</a>。加速器不在列表中就不要强行编译——改用官方 API、其他引擎，或单独使用 <a href="/zh/recipe/">deepseek-recipe</a>。</p>
+    <h1>硬件门槛</h1>
+    <p>依据 <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">官方 README</a>。加速器不在列表中就不要强行编译。</p>
   </div></div>
-  <div class="wrap prose" style="padding-bottom:2.5rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
-<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
---><span>Sponsored slot (inactive)</span></aside>
+  <div class="wrap prose" style="padding-bottom:4rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
     <h2>支持的硬件</h2>
     <div class="table-wrap" style="margin:1rem 0"><table>
-      <thead><tr><th>加速器</th><th>厂商</th><th>工具链（README）</th><th>环境变量</th></tr></thead>
+      <thead><tr><th>加速器</th><th>厂商</th><th>工具链</th><th>环境变量</th></tr></thead>
       <tbody>
         <tr><td><strong>SM100 GPU</strong></td><td>NVIDIA</td><td>CUDA 13</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=nvidia</code></td></tr>
         <tr><td><strong>Ascend 950 NPU</strong></td><td>华为</td><td>CANN 9.2</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=ascend</code></td></tr>
       </tbody>
     </table></div>
     <h2>软件前置</h2>
-    <ul class="checklist">
-      <li>Linux</li>
-      <li>GCC ≥ 13.0</li>
-      <li>Python 3.12（<code class="inline-code">./build.sh</code> 前使用干净环境）</li>
-      <li>NVIDIA 侧 CUDA 13 · Ascend 侧 CANN 9.2</li>
-    </ul>
-    <h2>本版本支持的模型</h2>
-    <p><strong>DeepSeek-V4.1-Flash</strong>。默认权重示例：<code class="inline-code">deepseek-ai/DeepSeek-V4.1-Flash-1017</code>。</p>
-    <h2>上游基准所用硬件</h2>
-    <p>README 中 Prefill/Decode 图：Prefill 测于 <strong>4 张 SM100</strong>，Decode 测于 <strong>64 张 SM100</strong>，各自在一个 scale-up 域内。复现见 <code class="inline-code">examples/sweep/run_sweep.sh</code>。本站不另编 MIPS 或单价数字。</p>
-    <h2>未包含 — 完整服务仍需要</h2>
+    <ul class="checklist"><li>Linux</li><li>GCC ≥ 13.0</li><li>Python 3.12</li><li>CUDA 13 或 CANN 9.2</li></ul>
+    <h2>模型</h2>
+    <p><strong>DeepSeek-V4.1-Flash</strong> · 默认权重示例 <code class="inline-code">deepseek-ai/DeepSeek-V4.1-Flash-1017</code>。</p>
+    <h2>上游基准</h2>
+    <p>Prefill：4× SM100。Decode：64× SM100。各自在一个 scale-up 域内。复现见 <code class="inline-code">examples/sweep/run_sweep.sh</code>。</p>
+    <h2>完整服务仍缺</h2>
     <div class="table-wrap" style="margin:1rem 0"><table>
-      <thead><tr><th>缺失组件</th><th>为何重要</th></tr></thead>
+      <thead><tr><th>缺失</th><th>为何重要</th></tr></thead>
       <tbody>
-        <tr><td>KV cache 系统</td><td>在线多轮 / 高 QPS 通常依赖</td></tr>
-        <tr><td>VE / Prefill / Decode 分离</td><td>引擎侧大多已具备；完整服务胶水未随开源发布</td></tr>
-        <tr><td>DP 负载均衡（prefill + decode）</td><td>数据并行副本间的均衡</td></tr>
+        <tr><td>KV cache 系统</td><td>在线多轮 / 高 QPS</td></tr>
+        <tr><td>VE / Prefill / Decode 分离</td><td>完整服务胶水未开源</td></tr>
+        <tr><td>DP 负载均衡</td><td>prefill + decode 副本均衡</td></tr>
       </tbody>
     </table></div>
     <h2>跳过条件</h2>
     <ul class="checklist">
       <li>既无 SM100 也无 Ascend 950</li>
-      <li>只需托管 Chat Completions</li>
-      <li>需要智能体运行时 → <a href="https://dshbase.com/">DeepSeek Harness</a></li>
-      <li>只需协议转换 → <a href="/zh/recipe/">deepseek-recipe</a></li>
+      <li>托管 API 已够用</li>
+      <li>需要智能体 → <a href="https://dshbase.com/">DSH</a></li>
+      <li>只需协议 → <a href="/zh/recipe/">recipe</a></li>
     </ul>
     <div class="related" style="margin-top:2rem">
-      <a class="card" href="/zh/install/"><h3>安装清单</h3><p>过门槛后的构建步骤。</p></a>
-      <a class="card" href="/zh/blog/hardware-gate-sm100-ascend/"><h3>博客：硬件门槛</h3><p>更长的走读。</p></a>
+      <a class="card" href="/zh/install/"><h3>安装</h3><p>过门槛后的构建。</p></a>
+      <a class="card" href="/zh/blog/hardware-gate-sm100-ascend/"><h3>博客</h3><p>更长的硬件走读。</p></a>
     </div>
   </div>
 </main>
 <footer class="site-footer">
   <div class="wrap-wide footer-grid">
     <div>
-      <a class="logo" href="/zh/" style="margin-bottom:.7rem">
-        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
-        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      <a class="logo" href="/zh/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
       </a>
-      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
-        DeepSeek DeepInfer 与 deepseek-recipe 指南。
-      </p>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">DeepSeek DeepInfer 与 deepseek-recipe 指南。</p>
     </div>
     <div>
       <h4>指南</h4>
       <a href="/zh/install/">安装</a>
       <a href="/zh/hardware/">硬件</a>
+      <a href="/zh/blog/">博客</a>
       <a href="/zh/vs-vllm/">对比 vLLM</a>
       <a href="/zh/recipe/">Recipe</a>
-      <a href="/zh/blog/">博客</a>
       <a href="/zh/faq/">FAQ</a>
     </div>
     <div>
@@ -134,7 +132,7 @@
   </div>
   <div class="wrap-wide footer-note">
     <p>非官方社区指南 · 与 DeepSeek 无隶属关系</p>
-    <p>上游项目：DeepInfer（Apache-2.0）· deepseek-recipe（MIT）。Prefill 与 Decode 是同一 DeepInfer 引擎的两个阶段。</p>
+    <p>上游：DeepInfer（Apache-2.0）· deepseek-recipe（MIT）。Prefill 与 Decode 是同一引擎的两个阶段。</p>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>

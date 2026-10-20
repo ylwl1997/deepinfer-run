@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer 对比 vLLM、SGLang 与官方 API | deepinfer.run</title>
-<meta name="description" content="DeepSeek DeepInfer 与 vLLM、SGLang、官方 API 的适用场景对比；开源版本「包含 / 不包含」对照表。"/>
+<title>DeepSeek DeepInfer 对比 vLLM、SGLang 与 API | deepinfer.run</title>
+<meta name="description" content="DeepSeek DeepInfer 与 vLLM、SGLang、官方 API 的适用场景对比。"/>
 <link rel="canonical" href="https://deepinfer.run/zh/vs-vllm/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/vs-vllm/"/>
@@ -13,35 +13,42 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="zh_CN"/>
 <meta property="og:url" content="https://deepinfer.run/zh/vs-vllm/"/>
-<meta property="og:title" content="DeepSeek DeepInfer 对比 vLLM、SGLang 与官方 API | deepinfer.run"/>
-<meta property="og:description" content="DeepSeek DeepInfer 与 vLLM、SGLang、官方 API 的适用场景对比；开源版本「包含 / 不包含」对照表。"/>
+<meta property="og:title" content="DeepSeek DeepInfer 对比 vLLM、SGLang 与 API | deepinfer.run"/>
+<meta property="og:description" content="DeepSeek DeepInfer 与 vLLM、SGLang、官方 API 的适用场景对比。"/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
-<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer 对比 vLLM、SGLang 与官方 API | deepinfer.run"/>
-<meta name="twitter:description" content="DeepSeek DeepInfer 与 vLLM、SGLang、官方 API 的适用场景对比；开源版本「包含 / 不包含」对照表。"/>
+<meta name="twitter:title" content="DeepSeek DeepInfer 对比 vLLM、SGLang 与 API | deepinfer.run"/>
+<meta name="twitter:description" content="DeepSeek DeepInfer 与 vLLM、SGLang、官方 API 的适用场景对比。"/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
 <link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
 </head>
 <body>
 <header class="site-header">
   <div class="wrap-wide header-inner">
     <a class="logo" href="/zh/">
-      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
-      <span class="word">DeepInfer</span>
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
     <nav class="nav" id="site-nav">
-      <a href="/zh/">首页</a>
       <a href="/zh/install/">安装</a>
       <a href="/zh/hardware/">硬件</a>
-      <a href="/zh/vs-vllm/" aria-current="page">对比 vLLM</a>
-      <a href="/zh/recipe/">Recipe</a>
       <a href="/zh/blog/">博客</a>
-      <a href="/zh/faq/">FAQ</a>
+      <details class="nav-more" open>
+        <summary>更多</summary>
+        <div class="nav-more-panel">
+          <a href="/zh/vs-vllm/" aria-current="page">对比 vLLM</a>
+          <a href="/zh/recipe/">Recipe</a>
+          <a href="/zh/faq/">FAQ</a>
+        </div>
+      </details>
     </nav>
     <div class="nav-tools">
       <div class="lang-switch" aria-label="Language">
@@ -56,58 +63,42 @@
 <main>
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/zh/">首页</a> / <a href="/zh/vs-vllm/">对比 vLLM</a></div>
-    <h1>DeepSeek DeepInfer 对比 vLLM / SGLang / API</h1>
-    <p>上游致谢：DeepInfer 主要基于 vLLM，并参考 SGLang 与 TensorRT-LLM。本页谈适配场景，而非打分榜。</p>
+    <h1>对比 vLLM / SGLang / API</h1>
+    <p>上游致谢：主要基于 vLLM，并参考 SGLang 与 TensorRT-LLM。本页谈适配，不排名。</p>
   </div></div>
-  <div class="wrap prose" style="padding-bottom:2.5rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
-<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
---><span>Sponsored slot (inactive)</span></aside>
-    <h2>速览</h2>
+  <div class="wrap prose" style="padding-bottom:4rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
     <div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>选项</th><th>更适合</th><th>离线 V4.1-Flash？</th></tr></thead>
       <tbody>
-        <tr><td><strong>DeepInfer</strong></td><td>SM100 / Ascend 950 + DeepSeek 生产离线路径</td><td class="yes">是</td></tr>
+        <tr><td><strong>DeepInfer</strong></td><td>SM100 / Ascend 950 + DeepSeek 离线路径</td><td class="yes">是</td></tr>
         <tr><td><strong>vLLM / SGLang</strong></td><td>更广模型面或其他加速器</td><td class="partial">视项目而定</td></tr>
         <tr><td><strong>官方 API</strong></td><td>托管推理、无需自管 GPU</td><td class="no">托管</td></tr>
       </tbody>
     </table></div>
     <h2>包含</h2>
-    <ul class="checklist">
-      <li>DeepSeek-V4.1-Flash 离线推理</li>
-      <li>优化算子与 DP/CP/EP 并行</li>
-      <li>DSpark、SWA bounded replay、异步调度</li>
-      <li>批不变 / 确定性采样开关（NVIDIA）</li>
-      <li>结构化输出</li>
-    </ul>
+    <ul class="checklist"><li>离线 V4.1-Flash</li><li>优化算子与 DP/CP/EP</li><li>DSpark、SWA replay、异步调度</li><li>结构化输出</li></ul>
     <h2>不包含</h2>
-    <ul class="checklist">
-      <li>KV cache 系统</li>
-      <li>完整 Prefill/Decode 分离服务</li>
-      <li>面向 prefill/decode 的 DP 负载均衡</li>
-      <li>智能体编排（→ DSH）或协议门面（→ recipe）</li>
-    </ul>
-    <div class="callout"><strong>Prefill ≠ 独立产品。</strong>同一引擎的两个阶段。见 <a href="/zh/faq/">FAQ</a> 与 <a href="/zh/blog/prefill-decode-three-layers/">博客</a>。</div>
+    <ul class="checklist"><li>KV cache 系统</li><li>完整 PD 分离服务</li><li>DP 负载均衡</li><li>智能体（DSH）或协议（recipe）</li></ul>
+    <div class="callout"><strong>Prefill ≠ 独立产品。</strong>同一引擎的两个阶段 — <a href="/zh/blog/prefill-decode-three-layers/">博客</a>。</div>
   </div>
 </main>
 <footer class="site-footer">
   <div class="wrap-wide footer-grid">
     <div>
-      <a class="logo" href="/zh/" style="margin-bottom:.7rem">
-        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
-        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      <a class="logo" href="/zh/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
       </a>
-      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
-        DeepSeek DeepInfer 与 deepseek-recipe 指南。
-      </p>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">DeepSeek DeepInfer 与 deepseek-recipe 指南。</p>
     </div>
     <div>
       <h4>指南</h4>
       <a href="/zh/install/">安装</a>
       <a href="/zh/hardware/">硬件</a>
+      <a href="/zh/blog/">博客</a>
       <a href="/zh/vs-vllm/">对比 vLLM</a>
       <a href="/zh/recipe/">Recipe</a>
-      <a href="/zh/blog/">博客</a>
       <a href="/zh/faq/">FAQ</a>
     </div>
     <div>
@@ -120,7 +111,7 @@
   </div>
   <div class="wrap-wide footer-note">
     <p>非官方社区指南 · 与 DeepSeek 无隶属关系</p>
-    <p>上游项目：DeepInfer（Apache-2.0）· deepseek-recipe（MIT）。Prefill 与 Decode 是同一 DeepInfer 引擎的两个阶段。</p>
+    <p>上游：DeepInfer（Apache-2.0）· deepseek-recipe（MIT）。Prefill 与 Decode 是同一引擎的两个阶段。</p>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>
