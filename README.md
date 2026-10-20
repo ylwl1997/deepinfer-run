@@ -15,8 +15,8 @@ Guide site for **DeepSeek DeepInfer** (primary) and **deepseek-recipe** (seconda
 ## Ads — 待建独立 placement
 
 Adsterra **Social Bar only** (no Native Banner / 300×250).  
-HTML contains a **comment placeholder** only — do **not** long-term reuse the dshbase `bauval.org` unit.  
-When PM creates a deepinfer.run Social Bar, paste the script URL into the shared footer comment on all pages (or a future shared partial).
+Live Social Bar: `https://bauval.org/14/f1ee1fe490192b0a856e617a2e113bc0` (SocialBar_1 / zone 31830530 / site 6136999).  
+Never use dshbase unit `3a79b35d…`. Social Bar only — no Native Banner / 300×250.
 
 ## GA4 — 待填 GA4 测量 ID
 
