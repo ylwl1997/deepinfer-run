@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>deepseek-recipe — 协议层（不执行推理）| deepinfer.run</title>
-<meta name="description" content="deepseek-recipe：协议、提示词、分词。与 DeepInfer 分层配合。MIT。"/>
+<title>deepseek-recipe ≠ DeepInfer 引擎 — 协议与提示词 | deepinfer.run</title>
+<meta name="description" content="deepseek-recipe 不是 DeepInfer 推理引擎：面向 DeepSeek-V4.1-Flash 的协议、提示词与分词；需自备推理后端。MIT。"/>
 <link rel="canonical" href="https://deepinfer.run/zh/recipe/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/recipe/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="zh_CN"/>
 <meta property="og:url" content="https://deepinfer.run/zh/recipe/"/>
-<meta property="og:title" content="deepseek-recipe — 协议层（不执行推理）| deepinfer.run"/>
-<meta property="og:description" content="deepseek-recipe：协议、提示词、分词。与 DeepInfer 分层配合。MIT。"/>
+<meta property="og:title" content="deepseek-recipe ≠ DeepInfer 引擎 — 协议与提示词 | deepinfer.run"/>
+<meta property="og:description" content="deepseek-recipe 不是 DeepInfer 推理引擎：面向 DeepSeek-V4.1-Flash 的协议、提示词与分词；需自备推理后端。MIT。"/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="deepseek-recipe — 协议层（不执行推理）| deepinfer.run"/>
-<meta name="twitter:description" content="deepseek-recipe：协议、提示词、分词。与 DeepInfer 分层配合。MIT。"/>
+<meta name="twitter:title" content="deepseek-recipe ≠ DeepInfer 引擎 — 协议与提示词 | deepinfer.run"/>
+<meta name="twitter:description" content="deepseek-recipe 不是 DeepInfer 推理引擎：面向 DeepSeek-V4.1-Flash 的协议、提示词与分词；需自备推理后端。MIT。"/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -28,6 +28,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: 待填独立测量 ID — do NOT reuse dshbase G-YVWXYEDWK5.
+     Set window.__GA_ID__ below (e.g. G-XXXXXXXX) then deploy. -->
+<script>
+window.__GA_ID__ = ''; // 待填 GA4 测量 ID
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -63,12 +83,11 @@
 <main>
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/zh/">首页</a> / <a href="/zh/recipe/">Recipe</a></div>
-    <h1>deepseek-recipe</h1>
+    <h1>deepseek-recipe ≠ DeepInfer 引擎</h1>
     <p>协议与提示词——不是推理引擎。推理、工具与 HTTP 由调用方提供。</p>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
-    <div class="table-wrap" style="margin:1rem 0"><table>
+<div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>组件</th><th>职责</th></tr></thead>
       <tbody>
         <tr><td><strong>deepseek-recipe</strong></td><td>请求 → 提示词 / token；输出 → 协议响应</td></tr>
@@ -119,4 +138,8 @@ print(DeepseekV41Encoding().render_conversation(converted.conversation).prompt)<
   </div>
 </footer>
 <script src="/js/site.js" defer></script>
+<!-- Ads: Adsterra Social Bar ONLY when PM supplies deepinfer.run placement.
+     Do NOT reuse dshbase bauval.org script long-term. 待建独立 placement.
+     -->
+
 </body></html>

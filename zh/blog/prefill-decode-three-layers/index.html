@@ -28,6 +28,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: 待填独立测量 ID — do NOT reuse dshbase G-YVWXYEDWK5.
+     Set window.__GA_ID__ below (e.g. G-XXXXXXXX) then deploy. -->
+<script>
+window.__GA_ID__ = ''; // 待填 GA4 测量 ID
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -67,8 +87,7 @@
     <p class="post-meta">2026-10-20 · <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">dshbase 给 DSH 读者的说明</a></p>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
-    <p>Prefill / Decode 图表是同一引擎的两个阶段——不是两个产品。</p>
+<p>Prefill / Decode 图表是同一引擎的两个阶段——不是两个产品。</p>
     <h2>同一引擎，两个阶段</h2>
     <div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>阶段</th><th>关注点</th><th>README sweep</th></tr></thead>
@@ -122,4 +141,8 @@
   </div>
 </footer>
 <script src="/js/site.js" defer></script>
+<!-- Ads: Adsterra Social Bar ONLY when PM supplies deepinfer.run placement.
+     Do NOT reuse dshbase bauval.org script long-term. 待建独立 placement.
+     -->
+
 </body></html>

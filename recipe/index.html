@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>deepseek-recipe — protocols (does not infer) | deepinfer.run</title>
-<meta name="description" content="deepseek-recipe: protocols, prompts, tokenization. Stacks with DeepInfer. MIT."/>
+<title>deepseek-recipe ≠ DeepInfer Engine — Protocols & Prompts | deepinfer.run</title>
+<meta name="description" content="deepseek-recipe is not the DeepInfer inference engine: protocols, prompts, tokenization for DeepSeek-V4.1-Flash. Stack with DeepInfer or another backend. MIT."/>
 <link rel="canonical" href="https://deepinfer.run/recipe/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/recipe/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/recipe/"/>
-<meta property="og:title" content="deepseek-recipe — protocols (does not infer) | deepinfer.run"/>
-<meta property="og:description" content="deepseek-recipe: protocols, prompts, tokenization. Stacks with DeepInfer. MIT."/>
+<meta property="og:title" content="deepseek-recipe ≠ DeepInfer Engine — Protocols & Prompts | deepinfer.run"/>
+<meta property="og:description" content="deepseek-recipe is not the DeepInfer inference engine: protocols, prompts, tokenization for DeepSeek-V4.1-Flash. Stack with DeepInfer or another backend. MIT."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="deepseek-recipe — protocols (does not infer) | deepinfer.run"/>
-<meta name="twitter:description" content="deepseek-recipe: protocols, prompts, tokenization. Stacks with DeepInfer. MIT."/>
+<meta name="twitter:title" content="deepseek-recipe ≠ DeepInfer Engine — Protocols & Prompts | deepinfer.run"/>
+<meta name="twitter:description" content="deepseek-recipe is not the DeepInfer inference engine: protocols, prompts, tokenization for DeepSeek-V4.1-Flash. Stack with DeepInfer or another backend. MIT."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -28,6 +28,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: 待填独立测量 ID — do NOT reuse dshbase G-YVWXYEDWK5.
+     Set window.__GA_ID__ below (e.g. G-XXXXXXXX) then deploy. -->
+<script>
+window.__GA_ID__ = ''; // 待填 GA4 测量 ID
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -63,12 +83,11 @@
 <main>
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/">Home</a> / <a href="/recipe/">Recipe</a></div>
-    <h1>deepseek-recipe</h1>
+    <h1>deepseek-recipe ≠ DeepInfer engine</h1>
     <p>Protocols and prompts — not inference. You provide the backend, tools, and HTTP.</p>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
-    <div class="table-wrap" style="margin:1rem 0"><table>
+<div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>Piece</th><th>Role</th></tr></thead>
       <tbody>
         <tr><td><strong>deepseek-recipe</strong></td><td>Request → prompt / tokens; output → protocol responses</td></tr>
@@ -119,4 +138,8 @@ print(DeepseekV41Encoding().render_conversation(converted.conversation).prompt)<
   </div>
 </footer>
 <script src="/js/site.js" defer></script>
+<!-- Ads: Adsterra Social Bar ONLY when PM supplies deepinfer.run placement.
+     Do NOT reuse dshbase bauval.org script long-term. 待建独立 placement.
+     -->
+
 </body></html>

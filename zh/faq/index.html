@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer FAQ | deepinfer.run</title>
-<meta name="description" content="FAQ：离线范围、与 DSH、Prefill/Decode，以及与医疗站 deepinfer.org 的区分。"/>
+<title>DeepInfer FAQ — DSpark、SWA、FlashMLA、KV Cache 缺口 | deepinfer.run</title>
+<meta name="description" content="DeepSeek DeepInfer FAQ：DSpark 推测解码、SWA Bounded Replay、结构化输出、FlashMLA DeepGEMM DeepEP；为何缺少 KV cache / Prefill-Decode 分离 / 负载均衡；deepseek-recipe ≠ 引擎。"/>
 <link rel="canonical" href="https://deepinfer.run/zh/faq/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/faq/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="zh_CN"/>
 <meta property="og:url" content="https://deepinfer.run/zh/faq/"/>
-<meta property="og:title" content="DeepSeek DeepInfer FAQ | deepinfer.run"/>
-<meta property="og:description" content="FAQ：离线范围、与 DSH、Prefill/Decode，以及与医疗站 deepinfer.org 的区分。"/>
+<meta property="og:title" content="DeepInfer FAQ — DSpark、SWA、FlashMLA、KV Cache 缺口 | deepinfer.run"/>
+<meta property="og:description" content="DeepSeek DeepInfer FAQ：DSpark 推测解码、SWA Bounded Replay、结构化输出、FlashMLA DeepGEMM DeepEP；为何缺少 KV cache / Prefill-Decode 分离 / 负载均衡；deepseek-recipe ≠ 引擎。"/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer FAQ | deepinfer.run"/>
-<meta name="twitter:description" content="FAQ：离线范围、与 DSH、Prefill/Decode，以及与医疗站 deepinfer.org 的区分。"/>
+<meta name="twitter:title" content="DeepInfer FAQ — DSpark、SWA、FlashMLA、KV Cache 缺口 | deepinfer.run"/>
+<meta name="twitter:description" content="DeepSeek DeepInfer FAQ：DSpark 推测解码、SWA Bounded Replay、结构化输出、FlashMLA DeepGEMM DeepEP；为何缺少 KV cache / Prefill-Decode 分离 / 负载均衡；deepseek-recipe ≠ 引擎。"/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -28,6 +28,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: 待填独立测量 ID — do NOT reuse dshbase G-YVWXYEDWK5.
+     Set window.__GA_ID__ below (e.g. G-XXXXXXXX) then deploy. -->
+<script>
+window.__GA_ID__ = ''; // 待填 GA4 测量 ID
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -60,28 +80,48 @@
   </div>
 </header>
 
+
 <main>
   <div class="page-hero"><div class="wrap prose">
-    <div class="crumbs"><a href="/zh/">首页</a> / <a href="/zh/faq/">FAQ</a></div>
-    <h1>FAQ</h1>
-    <p>简答，并指向官方来源。</p>
+    <div class="crumbs"><a href="/zh/">首页</a> / FAQ</div>
+    <h1>DeepInfer FAQ</h1>
+    <p>内容对齐 <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">官方 DeepInfer README</a> — 离线推理、算子与服务缺口。</p>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
-    <h2>DeepInfer、recipe、DSH？</h2>
+    <h2>DeepInfer、deepseek-recipe、DeepSeek Harness？</h2>
     <ul>
-      <li><strong>DeepInfer</strong> — 推理引擎（离线 V4.1-Flash）。</li>
-      <li><strong>deepseek-recipe</strong> — 协议层；不执行推理。</li>
-      <li><strong>DeepSeek Harness</strong> — 智能体 · <a href="https://dshbase.com/">dshbase</a> · <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">说明</a>。</li>
+      <li><strong>DeepInfer</strong> — DeepSeek-V4.1-Flash 的开源<strong>离线推理</strong>引擎（Apache-2.0），定位生产级推理引擎。</li>
+      <li><strong>deepseek-recipe</strong> — 协议 / 提示词 / 分词；<em>不</em>执行推理。</li>
+      <li><strong>DeepSeek Harness（DSH）</strong> — 智能体运行时 · <a href="https://dshbase.com/">dshbase.com</a> · <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">说明</a>。</li>
     </ul>
-    <h2>Prefill 是第二个产品吗？</h2>
-    <p><strong>不是。</strong>同一引擎的两个阶段。</p>
-    <h2>离线范围？</h2>
-    <p>核心推理，不含完整生产服务壳。仍缺：KV cache、完整 PD 分离服务、DP 负载均衡。</p>
-    <h2>硬件 / 模型？</h2>
-    <p>SM100 与 Ascend 950 · DeepSeek-V4.1-Flash。见 <a href="/zh/hardware/">硬件</a>。</p>
+
+    <h2>什么是 DSpark（推测解码）？</h2>
+    <p><strong>DSpark</strong> 与置信度调度验证用 draft token 加速解码，并按置信度安排验证。开启：<code class="inline-code">DEEPINFER_ENABLE_MTP_VARLEN=1</code>；<code class="inline-code">DEEPINFER_USE_NEXTN_DECODE</code> 控制最大 draft 长度（默认 5）。</p>
+
+    <h2>什么是 SWA Bounded Replay？</h2>
+    <p>Decoder 侧 <strong>SWA bounded replay</strong> 只回放有界后缀，减少 decoder prefill 工作量。README 默认 V4.1：<code class="inline-code">DEEPINFER_YOCO_PREFILL_TRUNCATION_MODE=compact</code>、<code class="inline-code">DEEPINFER_YOCO_PREFILL_KEEP_TOKENS=140</code>。保留后缀须覆盖 SWA 窗口与最大回退长度。</p>
+
+    <h2>结构化输出？</h2>
+    <p>通过 <code class="inline-code">SamplingParams</code> 的 <code class="inline-code">so_args</code> 约束为 regex、JSON Schema 或 EBNF。见上游 <code class="inline-code">examples/_structured_output.py</code>。</p>
+
+    <h2>DeepInfer 用哪些算子？</h2>
+    <p>上游列出的优化算子：<strong>FlashMLA</strong>、<strong>DeepGEMM</strong>、<strong>DeepEP</strong>、<strong>TileKernels</strong>、<strong>DeepSelect</strong> 与自定义 <strong>TileLang</strong>，以及 Attention DP / balanced CP、MoE EP + EPLB。</p>
+
+    <h2>批不变与确定性采样？</h2>
+    <p>批不变推理（<code class="inline-code">DEEPINFER_BATCH_INVARIANT=1</code>，仅 NVIDIA）保证不同 batch 组成下结果一致。确定性采样再配合 <code class="inline-code">DEEPINFER_ENABLE_MTP_VARLEN=0</code> 与固定 <code class="inline-code">seq_seed</code>。</p>
+
+    <h2>为何缺少 KV cache、Prefill/Decode 分离与负载均衡？</h2>
+    <p>开源版本聚焦<strong>离线推理</strong>。上游写明完整推理服务仍需：<strong>KV cache 系统</strong>、<strong>VE/Prefill/Decode 分离</strong>（引擎侧大多已具备；完整服务胶水未发布），以及面向 prefill 与 decode 的数据并行<strong>负载均衡</strong>。Prefill 与 Decode 仍是同一 DeepInfer 引擎的两个阶段，不是两个产品。目标场景强调高吞吐低延迟，但完整在线栈需自备缺口组件。</p>
+
+    <h2>对比 vLLM / SGLang / TensorRT-LLM？</h2>
+    <p>致谢：DeepInfer 主要基于 vLLM，并参考 SGLang 与 TensorRT-LLM。若要在 SM100 / 昇腾 950 上跑 DeepSeek V4.1-Flash 离线路径，见 <a href="/zh/vs-vllm/">对比页</a>。</p>
+
+    <h2>硬件与安装？</h2>
+    <p>NVIDIA <strong>SM100</strong>（CUDA 13）与华为 <strong>昇腾 950</strong>（CANN 9.2）；设置 <code class="inline-code">DEEPINFER_ACCELERATOR</code>。见 <a href="/zh/hardware/">硬件</a>、<a href="/zh/install/">DeepInfer 安装</a>。</p>
+
     <h2>与医疗站 deepinfer.org？</h2>
     <p>无关。标题使用 «DeepSeek DeepInfer»；规范域名为 deepinfer.run。</p>
+
     <h2>许可证？</h2>
     <p>DeepInfer Apache-2.0 · deepseek-recipe MIT。</p>
   </div>
@@ -118,4 +158,8 @@
   </div>
 </footer>
 <script src="/js/site.js" defer></script>
+<!-- Ads: Adsterra Social Bar ONLY when PM supplies deepinfer.run placement.
+     Do NOT reuse dshbase bauval.org script long-term. 待建独立 placement.
+     -->
+
 </body></html>

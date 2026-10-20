@@ -28,6 +28,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: 待填独立测量 ID — do NOT reuse dshbase G-YVWXYEDWK5.
+     Set window.__GA_ID__ below (e.g. G-XXXXXXXX) then deploy. -->
+<script>
+window.__GA_ID__ = ''; // 待填 GA4 测量 ID
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -67,8 +87,7 @@
     <p>带表格与可核验来源的长文。</p>
   </div></div>
   <div class="wrap" style="padding-bottom:4rem;max-width:var(--wrap)">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
-    <div class="blog-list">
+<div class="blog-list">
       <a class="blog-item" href="/zh/blog/hardware-gate-sm100-ascend/">
         <div class="meta">2026-10-20 · 硬件</div>
         <h2>硬件门槛：SM100、Ascend 950，以及谁该跳过</h2>
@@ -114,4 +133,8 @@
   </div>
 </footer>
 <script src="/js/site.js" defer></script>
+<!-- Ads: Adsterra Social Bar ONLY when PM supplies deepinfer.run placement.
+     Do NOT reuse dshbase bauval.org script long-term. 待建独立 placement.
+     -->
+
 </body></html>

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer FAQ | deepinfer.run</title>
-<meta name="description" content="FAQ: offline scope, vs DSH, Prefill/Decode, and medical deepinfer.org name note."/>
+<title>DeepInfer FAQ — DSpark, SWA, FlashMLA, KV Cache Gaps | deepinfer.run</title>
+<meta name="description" content="DeepSeek DeepInfer FAQ: DSpark speculative decoding, SWA Bounded Replay, structured outputs, FlashMLA DeepGEMM DeepEP, why KV cache / Prefill-Decode disaggregation / load balancing are missing, deepseek-recipe ≠ engine."/>
 <link rel="canonical" href="https://deepinfer.run/faq/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/faq/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/faq/"/>
-<meta property="og:title" content="DeepSeek DeepInfer FAQ | deepinfer.run"/>
-<meta property="og:description" content="FAQ: offline scope, vs DSH, Prefill/Decode, and medical deepinfer.org name note."/>
+<meta property="og:title" content="DeepInfer FAQ — DSpark, SWA, FlashMLA, KV Cache Gaps | deepinfer.run"/>
+<meta property="og:description" content="DeepSeek DeepInfer FAQ: DSpark speculative decoding, SWA Bounded Replay, structured outputs, FlashMLA DeepGEMM DeepEP, why KV cache / Prefill-Decode disaggregation / load balancing are missing, deepseek-recipe ≠ engine."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer FAQ | deepinfer.run"/>
-<meta name="twitter:description" content="FAQ: offline scope, vs DSH, Prefill/Decode, and medical deepinfer.org name note."/>
+<meta name="twitter:title" content="DeepInfer FAQ — DSpark, SWA, FlashMLA, KV Cache Gaps | deepinfer.run"/>
+<meta name="twitter:description" content="DeepSeek DeepInfer FAQ: DSpark speculative decoding, SWA Bounded Replay, structured outputs, FlashMLA DeepGEMM DeepEP, why KV cache / Prefill-Decode disaggregation / load balancing are missing, deepseek-recipe ≠ engine."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -28,6 +28,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: 待填独立测量 ID — do NOT reuse dshbase G-YVWXYEDWK5.
+     Set window.__GA_ID__ below (e.g. G-XXXXXXXX) then deploy. -->
+<script>
+window.__GA_ID__ = ''; // 待填 GA4 测量 ID
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -60,29 +80,49 @@
   </div>
 </header>
 
+
 <main>
   <div class="page-hero"><div class="wrap prose">
-    <div class="crumbs"><a href="/">Home</a> / <a href="/faq/">FAQ</a></div>
-    <h1>FAQ</h1>
-    <p>Short answers with upstream pointers.</p>
+    <div class="crumbs"><a href="/">Home</a> / FAQ</div>
+    <h1>DeepInfer FAQ</h1>
+    <p>Answers aligned with the <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">official DeepInfer README</a> — offline inference, kernels, and serving gaps.</p>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
-    <h2>DeepInfer vs recipe vs DSH?</h2>
+    <h2>DeepInfer vs deepseek-recipe vs DeepSeek Harness?</h2>
     <ul>
-      <li><strong>DeepInfer</strong> — inference engine (offline V4.1-Flash).</li>
-      <li><strong>deepseek-recipe</strong> — protocols; does not infer.</li>
-      <li><strong>DeepSeek Harness</strong> — agents · <a href="https://dshbase.com/">dshbase</a> · <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DSH note</a>.</li>
+      <li><strong>DeepInfer</strong> — open-source offline inference engine for DeepSeek-V4.1-Flash (Apache-2.0).</li>
+      <li><strong>deepseek-recipe</strong> — protocols / prompts / tokenization; <em>does not</em> run inference.</li>
+      <li><strong>DeepSeek Harness (DSH)</strong> — agent runtime · <a href="https://dshbase.com/">dshbase.com</a> · <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">note for DSH readers</a>.</li>
     </ul>
-    <h2>Is Prefill a second product?</h2>
-    <p><strong>No.</strong> Prefill and Decode are two phases of the same engine.</p>
-    <h2>Offline scope?</h2>
-    <p>Core inference without the full production serving shell. Still missing: KV cache, full PD disaggregation service, DP load balancing.</p>
-    <h2>Hardware / model?</h2>
-    <p>SM100 and Ascend 950 · DeepSeek-V4.1-Flash. See <a href="/hardware/">hardware</a>.</p>
+
+    <h2>What is DSpark (and speculative decoding)?</h2>
+    <p><strong>DSpark</strong> plus confidence-scheduled verification accelerates decoding with draft tokens and schedules verification by confidence. Enable with <code class="inline-code">DEEPINFER_ENABLE_MTP_VARLEN=1</code>; <code class="inline-code">DEEPINFER_USE_NEXTN_DECODE</code> sets max draft length (default 5).</p>
+
+    <h2>What is SWA Bounded Replay?</h2>
+    <p>Decoder <strong>SWA bounded replay</strong> reduces decoder prefill work by replaying only a bounded suffix. Default V4.1 settings in the README: <code class="inline-code">DEEPINFER_YOCO_PREFILL_TRUNCATION_MODE=compact</code> and <code class="inline-code">DEEPINFER_YOCO_PREFILL_KEEP_TOKENS=140</code>. The retained suffix must cover the SWA window plus max backtracking length.</p>
+
+    <h2>Structured outputs?</h2>
+    <p>Constrain generation to a regex, JSON schema, or EBNF via <code class="inline-code">so_args</code> on <code class="inline-code">SamplingParams</code>. See upstream <code class="inline-code">examples/_structured_output.py</code>.</p>
+
+    <h2>Which kernels power DeepInfer?</h2>
+    <p>Optimized kernels listed upstream: <strong>FlashMLA</strong>, <strong>DeepGEMM</strong>, <strong>DeepEP</strong>, <strong>TileKernels</strong>, <strong>DeepSelect</strong>, and custom <strong>TileLang</strong> ops — plus Attention DP / balanced CP, MoE EP + EPLB.</p>
+
+    <h2>Batch-invariant and deterministic sampling?</h2>
+    <p>Batch-invariant inference (<code class="inline-code">DEEPINFER_BATCH_INVARIANT=1</code>, NVIDIA only) keeps results identical across batch compositions. Deterministic sampling pairs that flag with <code class="inline-code">DEEPINFER_ENABLE_MTP_VARLEN=0</code> and a fixed <code class="inline-code">seq_seed</code>.</p>
+
+    <h2>Why are KV cache, Prefill/Decode disaggregation, and load balancing missing?</h2>
+    <p>The open-source release focuses on offline inference. Upstream explicitly lists what a complete inference service still needs: a <strong>KV cache system</strong>, <strong>VE/Prefill/Decode disaggregation</strong> (most engine functionality is implemented; full service glue is not), and <strong>load balancing</strong> across data-parallel replicas for both prefill and decode. Prefill and Decode remain two phases of the <em>same</em> DeepInfer engine — not separate products.</p>
+
+    <h2>DeepInfer vs vLLM / SGLang / TensorRT-LLM?</h2>
+    <p>Acknowledgments: DeepInfer was built primarily on vLLM, with inspiration from SGLang and TensorRT-LLM. Use DeepInfer when you want DeepSeek’s V4.1-Flash offline path on SM100 / Ascend 950; see <a href="/vs-vllm/">vs vLLM</a>.</p>
+
+    <h2>Hardware and install?</h2>
+    <p>NVIDIA <strong>SM100</strong> (CUDA 13) and Huawei <strong>Ascend 950</strong> (CANN 9.2); set <code class="inline-code">DEEPINFER_ACCELERATOR</code>. Guides: <a href="/hardware/">hardware</a>, <a href="/install/">DeepInfer install</a>.</p>
+
     <h2>Medical deepinfer.org?</h2>
     <p>Unrelated. Titles use «DeepSeek DeepInfer»; canonical host is deepinfer.run.</p>
-    <h2>Licenses?</h2>
+
+    <h2>License?</h2>
     <p>DeepInfer Apache-2.0 · deepseek-recipe MIT.</p>
   </div>
 </main>
@@ -118,4 +158,8 @@
   </div>
 </footer>
 <script src="/js/site.js" defer></script>
+<!-- Ads: Adsterra Social Bar ONLY when PM supplies deepinfer.run placement.
+     Do NOT reuse dshbase bauval.org script long-term. 待建独立 placement.
+     -->
+
 </body></html>

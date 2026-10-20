@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer vs vLLM, SGLang & API | deepinfer.run</title>
-<meta name="description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official API."/>
+<title>DeepInfer vs vLLM, SGLang & TensorRT-LLM — What’s Included | deepinfer.run</title>
+<meta name="description" content="DeepSeek DeepInfer vs vLLM, SGLang, TensorRT-LLM and the official API: offline V4.1-Flash, FlashMLA-family kernels, Attention DP / MoE EP, what is not included."/>
 <link rel="canonical" href="https://deepinfer.run/vs-vllm/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/vs-vllm/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/vs-vllm/"/>
-<meta property="og:title" content="DeepSeek DeepInfer vs vLLM, SGLang & API | deepinfer.run"/>
-<meta property="og:description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official API."/>
+<meta property="og:title" content="DeepInfer vs vLLM, SGLang & TensorRT-LLM — What’s Included | deepinfer.run"/>
+<meta property="og:description" content="DeepSeek DeepInfer vs vLLM, SGLang, TensorRT-LLM and the official API: offline V4.1-Flash, FlashMLA-family kernels, Attention DP / MoE EP, what is not included."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer vs vLLM, SGLang & API | deepinfer.run"/>
-<meta name="twitter:description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official API."/>
+<meta name="twitter:title" content="DeepInfer vs vLLM, SGLang & TensorRT-LLM — What’s Included | deepinfer.run"/>
+<meta name="twitter:description" content="DeepSeek DeepInfer vs vLLM, SGLang, TensorRT-LLM and the official API: offline V4.1-Flash, FlashMLA-family kernels, Attention DP / MoE EP, what is not included."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -28,6 +28,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: 待填独立测量 ID — do NOT reuse dshbase G-YVWXYEDWK5.
+     Set window.__GA_ID__ below (e.g. G-XXXXXXXX) then deploy. -->
+<script>
+window.__GA_ID__ = ''; // 待填 GA4 测量 ID
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -63,12 +83,11 @@
 <main>
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/">Home</a> / <a href="/vs-vllm/">vs vLLM</a></div>
-    <h1>vs vLLM / SGLang / API</h1>
+    <h1>DeepInfer vs vLLM, SGLang &amp; TensorRT-LLM</h1>
     <p>Upstream: built primarily on vLLM, with inspiration from SGLang and TensorRT-LLM. This page is about fit.</p>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra placeholder --><span>Sponsored slot (inactive)</span></aside>
-    <div class="table-wrap" style="margin:1rem 0"><table>
+<div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>Option</th><th>Best when</th><th>Offline V4.1-Flash?</th></tr></thead>
       <tbody>
         <tr><td><strong>DeepInfer</strong></td><td>SM100 / Ascend 950 + DeepSeek offline path</td><td class="yes">Yes</td></tr>
@@ -76,9 +95,9 @@
         <tr><td><strong>Official API</strong></td><td>Hosted inference, no GPU ops</td><td class="no">Hosted</td></tr>
       </tbody>
     </table></div>
-    <h2>Included</h2>
+    <h2>Included in DeepInfer open source</h2>
     <ul class="checklist"><li>Offline V4.1-Flash</li><li>Optimized kernels, DP/CP/EP</li><li>DSpark, SWA replay, async scheduling</li><li>Structured outputs</li></ul>
-    <h2>Not included</h2>
+    <h2>Not included vs a full serving stack</h2>
     <ul class="checklist"><li>KV cache system</li><li>Complete PD disaggregation service</li><li>DP load balancing</li><li>Agents (DSH) or protocols (recipe)</li></ul>
     <div class="callout"><strong>Prefill ≠ product.</strong> Two phases of one engine — <a href="/blog/prefill-decode-three-layers/">blog</a>.</div>
   </div>
@@ -115,4 +134,8 @@
   </div>
 </footer>
 <script src="/js/site.js" defer></script>
+<!-- Ads: Adsterra Social Bar ONLY when PM supplies deepinfer.run placement.
+     Do NOT reuse dshbase bauval.org script long-term. 待建独立 placement.
+     -->
+
 </body></html>
