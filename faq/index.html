@@ -3,19 +3,23 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepSeek DeepInfer FAQ — name collision, offline scope, vs DSH, Prefill | deepinfer.run</title>
-<meta name="description" content="FAQ: DeepInfer vs deepinfer.org, offline release scope, DeepSeek Harness (DSH), Prefill/Decode as one engine, and deepseek-recipe."/>
+<title>DeepSeek DeepInfer FAQ — offline scope, vs DSH, Prefill | deepinfer.run</title>
+<meta name="description" content="FAQ: medical deepinfer.org name note, offline release scope, DeepSeek Harness, Prefill/Decode as one engine."/>
 <link rel="canonical" href="https://deepinfer.run/faq/"/>
 <meta name="robots" content="index,follow"/>
+<link rel="alternate" hreflang="en" href="https://deepinfer.run/faq/"/>
+<link rel="alternate" hreflang="zh-Hans" href="https://deepinfer.run/zh/faq/"/>
+<link rel="alternate" hreflang="x-default" href="https://deepinfer.run/faq/"/>
 <meta property="og:type" content="website"/>
+<meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/faq/"/>
-<meta property="og:title" content="DeepSeek DeepInfer FAQ — name collision, offline scope, vs DSH, Prefill | deepinfer.run"/>
-<meta property="og:description" content="FAQ: DeepInfer vs deepinfer.org, offline release scope, DeepSeek Harness (DSH), Prefill/Decode as one engine, and deepseek-recipe."/>
+<meta property="og:title" content="DeepSeek DeepInfer FAQ — offline scope, vs DSH, Prefill | deepinfer.run"/>
+<meta property="og:description" content="FAQ: medical deepinfer.org name note, offline release scope, DeepSeek Harness, Prefill/Decode as one engine."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer Guide"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepSeek DeepInfer FAQ — name collision, offline scope, vs DSH, Prefill | deepinfer.run"/>
-<meta name="twitter:description" content="FAQ: DeepInfer vs deepinfer.org, offline release scope, DeepSeek Harness (DSH), Prefill/Decode as one engine, and deepseek-recipe."/>
+<meta name="twitter:title" content="DeepSeek DeepInfer FAQ — offline scope, vs DSH, Prefill | deepinfer.run"/>
+<meta name="twitter:description" content="FAQ: medical deepinfer.org name note, offline release scope, DeepSeek Harness, Prefill/Decode as one engine."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -33,67 +37,49 @@
     <nav class="nav" id="site-nav">
       <a href="/">Home</a>
       <a href="/install/">Install</a>
+      <a href="/hardware/">Hardware</a>
       <a href="/vs-vllm/">vs vLLM</a>
       <a href="/recipe/">Recipe</a>
+      <a href="/blog/">Blog</a>
       <a href="/faq/" aria-current="page">FAQ</a>
-      <span class="soon" title="Coming soon">ZH Soon</span>
-      <span class="soon">Blog Soon</span>
-      <span class="soon">Hardware Soon</span>
     </nav>
+    <div class="nav-tools">
+      <div class="lang-switch" aria-label="Language">
+        <a href="/faq/" hreflang="en" aria-current="true">EN</a>
+        <a href="/zh/faq/" hreflang="zh-Hans">中文</a>
+      </div>
+      <a class="gh-btn secondary" href="https://github.com/deepseek-ai/deepseek-recipe" title="deepseek-recipe" aria-label="deepseek-recipe on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="gh-btn" href="https://github.com/deepseek-ai/DeepInfer" title="DeepInfer" aria-label="DeepInfer on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
   </div>
 </header>
 
 <main>
-  <div class="page-hero">
-    <div class="wrap prose">
-      <div class="crumbs"><a href="/">Home</a> / FAQ</div>
-      <h1>DeepSeek DeepInfer FAQ</h1>
-      <p>Short answers with pointers to official sources. This site is independent and <strong>not affiliated with DeepSeek</strong>.</p>
-    </div>
-  </div>
+  <div class="page-hero"><div class="wrap prose">
+    <div class="crumbs"><a href="/">Home</a> / <a href="/faq/">FAQ</a></div>
+    <h1>FAQ</h1>
+    <p>Short answers with pointers to official sources.</p>
+  </div></div>
   <div class="wrap prose" style="padding-bottom:2.5rem">
-    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment + replace key when ready.
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
 <script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
--->
-<span>Sponsored slot (inactive)</span></aside>
-    <h2>Is this deepinfer.org (medical)?</h2>
-    <p><strong>No.</strong> We deliberately title pages with «DeepSeek DeepInfer» to avoid collision with unrelated medical sites. Canonical: <code class="inline-code">https://deepinfer.run</code>.</p>
-
-    <h2>Is deepinfer.run affiliated with DeepSeek?</h2>
-    <p><strong>No.</strong> Independent guide. Official code lives at GitHub <code class="inline-code">deepseek-ai/DeepInfer</code> and <code class="inline-code">deepseek-ai/deepseek-recipe</code>.</p>
-
-    <h2>DeepInfer vs deepseek-recipe vs DeepSeek Harness?</h2>
+--><span>Sponsored slot (inactive)</span></aside>
+    <h2>DeepInfer vs deepseek-recipe vs DSH?</h2>
     <ul>
-      <li><strong>DeepInfer</strong> — production inference engine (offline V4.1-Flash in this release).</li>
-      <li><strong>deepseek-recipe</strong> — protocols / prompts / tokenization; does <em>not</em> infer.</li>
-      <li><strong>DeepSeek Harness (DSH)</strong> — agent runtime. Guide: <a href="https://dshbase.com/">dshbase.com</a>. Background for DSH readers: <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">EN</a> · <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">ZH</a>.</li>
+      <li><strong>DeepInfer</strong> — inference engine (offline V4.1-Flash in this release).</li>
+      <li><strong>deepseek-recipe</strong> — protocols; does not infer.</li>
+      <li><strong>DeepSeek Harness</strong> — agent runtime · <a href="https://dshbase.com/">dshbase.com</a> · <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">note for DSH readers</a>.</li>
     </ul>
-
     <h2>Is Prefill a second product?</h2>
-    <p><strong>No.</strong> Prefill and Decode are two phases of the <strong>same</strong> DeepInfer engine. Upstream shows separate Pareto charts because the workloads differ — not because they are separate downloads.</p>
-
-    <h2>What does “offline inference” mean here?</h2>
-    <p>The open-source release focuses on running inference without DeepSeek’s full production serving shell. A complete online service still needs components called out as <em>not included</em> (KV cache system, full Prefill/Decode disaggregation service, DP load balancing).</p>
-
-    <h2>Which hardware?</h2>
-    <p>Per official README: <strong>NVIDIA SM100</strong> and <strong>Huawei Ascend 950</strong>. Prerequisites include CUDA 13 (NVIDIA) or CANN 9.2 (Ascend), GCC ≥ 13, Python 3.12, Linux.</p>
-
-    <h2>Which model?</h2>
-    <p>Supported model listed upstream: <strong>DeepSeek-V4.1-Flash</strong>. Default checkpoint example: <code class="inline-code">deepseek-ai/DeepSeek-V4.1-Flash-1017</code> on Hugging Face.</p>
-
+    <p><strong>No.</strong> Prefill and Decode are two phases of the same DeepInfer engine.</p>
+    <h2>What does “offline” cover?</h2>
+    <p>Core inference without DeepSeek’s full production serving shell. Still missing for complete online service: KV cache, full PD disaggregation service, DP load balancing.</p>
+    <h2>Which hardware / model?</h2>
+    <p>SM100 and Ascend 950. Model: DeepSeek-V4.1-Flash. Defaults and toolchains on the <a href="/hardware/">hardware</a> and <a href="/install/">install</a> pages.</p>
+    <h2>Name collision with medical deepinfer.org?</h2>
+    <p>Unrelated site. We use «DeepSeek DeepInfer» in titles and canonical <code class="inline-code">https://deepinfer.run</code> to keep search intent clear.</p>
     <h2>Licenses?</h2>
-    <ul>
-      <li>DeepInfer — Apache License 2.0</li>
-      <li>deepseek-recipe — MIT License</li>
-    </ul>
-
-    <h2>Where should DSH users start?</h2>
-    <p>Keep using <a href="https://dshbase.com/">dshbase.com</a> for the harness. Read <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DeepInfer open source for DSH readers</a> if you care how the inference engine relates to agents — then come back here for engine/recipe install framing.</p>
-
-    <div class="related" style="margin-top:2rem">
-      <a class="card" href="/"><h3>Home · three layers</h3><p>Cards + who should not install.</p></a>
-      <a class="card" href="/install/"><h3>Install</h3><p>Official README checklist.</p></a>
-    </div>
+    <p>DeepInfer Apache-2.0 · deepseek-recipe MIT.</p>
   </div>
 </main>
 <footer class="site-footer">
@@ -104,33 +90,29 @@
         <span class="word">DeepInfer <span class="guide">.run</span></span>
       </a>
       <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
-        Independent guide for DeepSeek DeepInfer and deepseek-recipe. Not affiliated with DeepSeek.
+        Guide for DeepSeek DeepInfer and deepseek-recipe.
       </p>
     </div>
     <div>
       <h4>Guide</h4>
-      <a href="/install/">Install DeepInfer</a>
-      <a href="/vs-vllm/">vs vLLM / SGLang</a>
-      <a href="/recipe/">deepseek-recipe</a>
+      <a href="/install/">Install</a>
+      <a href="/hardware/">Hardware</a>
+      <a href="/vs-vllm/">vs vLLM</a>
+      <a href="/recipe/">Recipe</a>
+      <a href="/blog/">Blog</a>
       <a href="/faq/">FAQ</a>
     </div>
     <div>
       <h4>Related</h4>
-      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer (official)</a>
-      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe (official)</a>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe</a>
       <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
-      <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DSH readers: DeepInfer open source</a>
+      <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DeepInfer note for DSH readers</a>
     </div>
   </div>
   <div class="wrap-wide footer-note">
-    <p><strong>Not affiliated with DeepSeek.</strong> This site is an independent community guide.</p>
-    <p>
-      Upstream attribution:
-      <strong>DeepInfer</strong> is released under the <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/LICENSE">Apache License 2.0</a>;
-      <strong>deepseek-recipe</strong> under the <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/LICENSE">MIT License</a>.
-      Prefill and Decode are two phases of the same DeepInfer engine — not separate products.
-    </p>
-    <p>© deepinfer.run · Sources verified against official GitHub READMEs.</p>
+    <p>Unofficial community guide · Not affiliated with DeepSeek</p>
+    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same DeepInfer engine.</p>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>

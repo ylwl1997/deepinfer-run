@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DeepSeek DeepInfer 博客 — 硬件门槛、Prefill/Decode | deepinfer.run</title>
+<meta name="description" content="DeepSeek DeepInfer 专题：SM100/Ascend 硬件门槛，以及 Prefill/Decode 与三层结构说明。"/>
+<link rel="canonical" href="https://deepinfer.run/zh/blog/"/>
+<meta name="robots" content="index,follow"/>
+<link rel="alternate" hreflang="en" href="https://deepinfer.run/blog/"/>
+<link rel="alternate" hreflang="zh-Hans" href="https://deepinfer.run/zh/blog/"/>
+<link rel="alternate" hreflang="x-default" href="https://deepinfer.run/blog/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:locale" content="zh_CN"/>
+<meta property="og:url" content="https://deepinfer.run/zh/blog/"/>
+<meta property="og:title" content="DeepSeek DeepInfer 博客 — 硬件门槛、Prefill/Decode | deepinfer.run"/>
+<meta property="og:description" content="DeepSeek DeepInfer 专题：SM100/Ascend 硬件门槛，以及 Prefill/Decode 与三层结构说明。"/>
+<meta property="og:image" content="https://deepinfer.run/og.png"/>
+<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="DeepSeek DeepInfer 博客 — 硬件门槛、Prefill/Decode | deepinfer.run"/>
+<meta name="twitter:description" content="DeepSeek DeepInfer 专题：SM100/Ascend 硬件门槛，以及 Prefill/Decode 与三层结构说明。"/>
+<meta name="twitter:image" content="https://deepinfer.run/og.png"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="stylesheet" href="/css/site.css"/>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="logo" href="/zh/">
+      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
+      <span class="word">DeepInfer <span class="guide">指南</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
+    <nav class="nav" id="site-nav">
+      <a href="/zh/">首页</a>
+      <a href="/zh/install/">安装</a>
+      <a href="/zh/hardware/">硬件</a>
+      <a href="/zh/vs-vllm/">对比 vLLM</a>
+      <a href="/zh/recipe/">Recipe</a>
+      <a href="/zh/blog/" aria-current="page">博客</a>
+      <a href="/zh/faq/">FAQ</a>
+    </nav>
+    <div class="nav-tools">
+      <div class="lang-switch" aria-label="Language">
+        <a href="/blog/" hreflang="en">EN</a>
+        <a href="/zh/blog/" hreflang="zh-Hans" aria-current="true">中文</a>
+      </div>
+      <a class="gh-btn secondary" href="https://github.com/deepseek-ai/deepseek-recipe" title="deepseek-recipe" aria-label="deepseek-recipe on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="gh-btn" href="https://github.com/deepseek-ai/DeepInfer" title="DeepInfer" aria-label="DeepInfer on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero"><div class="wrap prose">
+    <div class="crumbs"><a href="/zh/">首页</a> / <a href="/zh/blog/">博客</a></div>
+    <h1>博客</h1>
+    <p>带表格与可核验来源的长文——不是短讯公告。</p>
+  </div></div>
+  <div class="wrap" style="padding-bottom:2.5rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
+<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
+--><span>Sponsored slot (inactive)</span></aside>
+    <div class="blog-list">
+      <a class="blog-item" href="/zh/blog/hardware-gate-sm100-ascend/">
+        <div class="meta">2026-10-20 · 硬件</div>
+        <h2>硬件门槛：SM100、Ascend 950，以及谁该跳过 DeepInfer</h2>
+        <p>支持加速器、CUDA 13 / CANN 9.2、缺失的服务组件，以及可执行的跳过清单。</p>
+      </a>
+      <a class="blog-item" href="/zh/blog/prefill-decode-three-layers/">
+        <div class="meta">2026-10-20 · 架构</div>
+        <h2>Prefill 与 Decode — 以及与 deepseek-recipe、DSH 的三层关系</h2>
+        <p>同一引擎，两个阶段。Recipe 与 Harness 如何并列，同时不薄化复述 dshbase 原文。</p>
+      </a>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide footer-grid">
+    <div>
+      <a class="logo" href="/zh/" style="margin-bottom:.7rem">
+        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
+        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      </a>
+      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
+        DeepSeek DeepInfer 与 deepseek-recipe 指南。
+      </p>
+    </div>
+    <div>
+      <h4>指南</h4>
+      <a href="/zh/install/">安装</a>
+      <a href="/zh/hardware/">硬件</a>
+      <a href="/zh/vs-vllm/">对比 vLLM</a>
+      <a href="/zh/recipe/">Recipe</a>
+      <a href="/zh/blog/">博客</a>
+      <a href="/zh/faq/">FAQ</a>
+    </div>
+    <div>
+      <h4>相关</h4>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe</a>
+      <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
+      <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">给 DSH 读者的 DeepInfer 说明</a>
+    </div>
+  </div>
+  <div class="wrap-wide footer-note">
+    <p>非官方社区指南 · 与 DeepSeek 无隶属关系</p>
+    <p>上游项目：DeepInfer（Apache-2.0）· deepseek-recipe（MIT）。Prefill 与 Decode 是同一 DeepInfer 引擎的两个阶段。</p>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+</body></html>

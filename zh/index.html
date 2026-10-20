@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DeepSeek DeepInfer — 安装、硬件、对比 vLLM、deepseek-recipe | deepinfer.run</title>
+<meta name="description" content="DeepSeek DeepInfer（V4.1-Flash）指南：支持硬件（SM100 / Ascend 950）、deepseek-recipe，以及 Prefill/Decode 同属一引擎的说明。"/>
+<link rel="canonical" href="https://deepinfer.run/zh/"/>
+<meta name="robots" content="index,follow"/>
+<link rel="alternate" hreflang="en" href="https://deepinfer.run/"/>
+<link rel="alternate" hreflang="zh-Hans" href="https://deepinfer.run/zh/"/>
+<link rel="alternate" hreflang="x-default" href="https://deepinfer.run/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:locale" content="zh_CN"/>
+<meta property="og:url" content="https://deepinfer.run/zh/"/>
+<meta property="og:title" content="DeepSeek DeepInfer — 安装、硬件、对比 vLLM、deepseek-recipe | deepinfer.run"/>
+<meta property="og:description" content="DeepSeek DeepInfer（V4.1-Flash）指南：支持硬件（SM100 / Ascend 950）、deepseek-recipe，以及 Prefill/Decode 同属一引擎的说明。"/>
+<meta property="og:image" content="https://deepinfer.run/og.png"/>
+<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="DeepSeek DeepInfer — 安装、硬件、对比 vLLM、deepseek-recipe | deepinfer.run"/>
+<meta name="twitter:description" content="DeepSeek DeepInfer（V4.1-Flash）指南：支持硬件（SM100 / Ascend 950）、deepseek-recipe，以及 Prefill/Decode 同属一引擎的说明。"/>
+<meta name="twitter:image" content="https://deepinfer.run/og.png"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="stylesheet" href="/css/site.css"/>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="logo" href="/zh/">
+      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
+      <span class="word">DeepInfer <span class="guide">指南</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
+    <nav class="nav" id="site-nav">
+      <a href="/zh/" aria-current="page">首页</a>
+      <a href="/zh/install/">安装</a>
+      <a href="/zh/hardware/">硬件</a>
+      <a href="/zh/vs-vllm/">对比 vLLM</a>
+      <a href="/zh/recipe/">Recipe</a>
+      <a href="/zh/blog/">博客</a>
+      <a href="/zh/faq/">FAQ</a>
+    </nav>
+    <div class="nav-tools">
+      <div class="lang-switch" aria-label="Language">
+        <a href="/" hreflang="en">EN</a>
+        <a href="/zh/" hreflang="zh-Hans" aria-current="true">中文</a>
+      </div>
+      <a class="gh-btn secondary" href="https://github.com/deepseek-ai/deepseek-recipe" title="deepseek-recipe" aria-label="deepseek-recipe on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="gh-btn" href="https://github.com/deepseek-ai/DeepInfer" title="DeepInfer" aria-label="DeepInfer on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero"><div class="wrap-wide">
+    <h1>DeepSeek <span class="grad">DeepInfer</span> — 生产级推理引擎解读</h1>
+    <p class="hero-lead">面向 DeepSeek-V4.1-Flash 的高性能推理框架。开源版本提供大规模服务所需的核心离线推理能力——与 deepseek-recipe 协议层、DeepSeek Harness 智能体运行时各司其职。</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">GitHub 上的 DeepInfer</a>
+      <a class="btn btn-secondary" href="/zh/install/">安装清单</a>
+      <a class="btn btn-ghost" href="/zh/hardware/">硬件门槛 →</a>
+    </div>
+  </div></section>
+  <section class="section"><div class="wrap-wide">
+    <div class="section-head"><h2>三层结构</h2>
+      <p>DeepInfer、deepseek-recipe 与 DeepSeek Harness 解决不同问题。Prefill 与 Decode 是同一引擎的两个阶段。</p></div>
+    <div class="grid-3">
+      <article class="card"><span class="tag tag-primary">引擎</span><h3>DeepInfer</h3>
+        <p>生产推理框架。开源路径支持 <strong>DeepSeek-V4.1-Flash</strong> 离线推理。</p>
+        <ul><li>SM100 · Ascend 950</li><li>Apache 2.0</li></ul>
+        <p style="margin-top:.8rem"><a href="/zh/hardware/">硬件说明 →</a></p></article>
+      <article class="card"><span class="tag tag-secondary">协议</span><h3>deepseek-recipe</h3>
+        <p>请求转换、提示词渲染、分词。<strong>不执行推理。</strong></p>
+        <ul><li><code class="inline-code">pip install deepseek-recipe</code></li><li>MIT</li></ul>
+        <p style="margin-top:.8rem"><a href="/zh/recipe/">Recipe 指南 →</a></p></article>
+      <article class="card"><span class="tag tag-link">智能体</span><h3>DeepSeek Harness</h3>
+        <p>智能体运行时——本站不作重点展开。</p>
+        <ul><li><a href="https://dshbase.com/">dshbase.com</a></li>
+        <li><a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">给 DSH 读者的说明</a></li></ul></article>
+    </div>
+  </div></section>
+  <section class="section"><div class="wrap-wide">
+    <div class="section-head"><h2>速览对比</h2></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>层级</th><th>是什么</th><th>推理？</th><th>许可证</th><th>入口</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DeepInfer</strong></td><td>离线推理引擎（V4.1-Flash）</td><td class="yes">是</td><td>Apache 2.0</td><td><a href="/zh/install/">安装</a></td></tr>
+        <tr><td><strong>deepseek-recipe</strong></td><td>协议 / 提示词 / 分词</td><td class="no">否</td><td>MIT</td><td><a href="/zh/recipe/">Recipe</a></td></tr>
+        <tr><td><strong>DeepSeek Harness</strong></td><td>智能体运行时</td><td class="no">不适用</td><td>见上游</td><td><a href="https://dshbase.com/">dshbase</a></td></tr>
+        <tr><td><strong>Prefill / Decode</strong></td><td>同一引擎的两个阶段</td><td class="partial">同一产品</td><td>—</td><td><a href="/zh/faq/">FAQ</a></td></tr>
+      </tbody>
+    </table></div>
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment when key ready.
+<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
+--><span>Sponsored slot (inactive)</span></aside>
+  </div></section>
+  <section class="section"><div class="wrap-wide">
+    <div class="section-head"><h2>谁不该安装</h2>
+      <p>符合下列任一情况可跳过编译——详见 <a href="/zh/hardware/">硬件门槛</a>。</p></div>
+    <div class="grid-2">
+      <div class="card"><h3>请跳过，若你…</h3><ul>
+        <li>只需官方托管 API</li>
+        <li>要的是智能体框架 → <a href="https://dshbase.com/">DSH</a></li>
+        <li>只需协议层 → <a href="/zh/recipe/">recipe</a></li>
+        <li>没有 <strong>SM100</strong> 或 <strong>Ascend 950</strong></li>
+        <li>需要完整在线服务（KV cache、Prefill/Decode 分离、DP 负载均衡——本开源版本未包含）</li>
+      </ul></div>
+      <div class="card"><h3>适合安装，若你…</h3><ul>
+        <li>要离线跑 DeepSeek-V4.1-Flash</li>
+        <li>具备 Linux、Python 3.12、GCC ≥ 13，以及 CUDA 13 或 CANN 9.2</li>
+        <li>能按官方 README 完成构建</li>
+      </ul>
+      <p style="margin-top:1rem"><a class="btn btn-primary" href="/zh/install/">打开安装指南</a></p></div>
+    </div>
+  </div></section>
+  <section class="section"><div class="wrap-wide">
+    <div class="section-head"><h2>继续阅读</h2></div>
+    <div class="related">
+      <a class="card" href="/zh/hardware/"><h3>硬件</h3><p>SM100 / Ascend 950、前置条件、未包含的服务组件。</p></a>
+      <a class="card" href="/zh/install/"><h3>安装</h3><p>对照官方 README 的构建清单。</p></a>
+      <a class="card" href="/zh/blog/"><h3>博客</h3><p>硬件门槛与 Prefill/Decode 专题。</p></a>
+      <a class="card" href="/zh/vs-vllm/"><h3>对比 vLLM</h3><p>包含 / 不包含 / 与 API。</p></a>
+      <a class="card" href="/zh/recipe/"><h3>Recipe</h3><p>协议层如何与引擎配合。</p></a>
+      <a class="card" href="/zh/faq/"><h3>FAQ</h3><p>名称冲突、离线范围、与 DSH 的关系。</p></a>
+    </div>
+  </div></section>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide footer-grid">
+    <div>
+      <a class="logo" href="/zh/" style="margin-bottom:.7rem">
+        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
+        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      </a>
+      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
+        DeepSeek DeepInfer 与 deepseek-recipe 指南。
+      </p>
+    </div>
+    <div>
+      <h4>指南</h4>
+      <a href="/zh/install/">安装</a>
+      <a href="/zh/hardware/">硬件</a>
+      <a href="/zh/vs-vllm/">对比 vLLM</a>
+      <a href="/zh/recipe/">Recipe</a>
+      <a href="/zh/blog/">博客</a>
+      <a href="/zh/faq/">FAQ</a>
+    </div>
+    <div>
+      <h4>相关</h4>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe</a>
+      <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
+      <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">给 DSH 读者的 DeepInfer 说明</a>
+    </div>
+  </div>
+  <div class="wrap-wide footer-note">
+    <p>非官方社区指南 · 与 DeepSeek 无隶属关系</p>
+    <p>上游项目：DeepInfer（Apache-2.0）· deepseek-recipe（MIT）。Prefill 与 Decode 是同一 DeepInfer 引擎的两个阶段。</p>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+</body></html>
