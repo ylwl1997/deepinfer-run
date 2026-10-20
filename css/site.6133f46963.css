@@ -32,7 +32,8 @@ html {
   scroll-behavior: smooth;
   color-scheme: dark;
   max-width: 100%;
-  overflow-x: hidden;
+  /* clip avoids creating a scroll container that kills position:sticky */
+  overflow-x: clip;
 }
 body {
   margin: 0;
@@ -44,7 +45,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 /* subtle top wash only — no rainbow blobs */
 body::before {
@@ -69,12 +70,14 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 60;
+  z-index: 100;
+  min-height: var(--header-h);
   height: var(--header-h);
   border-bottom: 1px solid var(--border);
-  background: rgba(7, 9, 15, 0.78);
-  backdrop-filter: blur(14px) saturate(1.15);
-  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  /* Near-opaque so scrolled prose does not bleed through Install/Hardware/Blog */
+  background: rgba(7, 9, 15, 0.96);
+  backdrop-filter: blur(12px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
 }
 .header-inner {
   height: 100%;
@@ -225,8 +228,18 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 }
 
 @media (max-width: 900px) {
+  .site-header {
+    height: auto;
+    min-height: var(--header-h);
+  }
   .nav-toggle { display: inline-flex; margin-left: auto; }
-  .header-inner { flex-wrap: wrap; height: auto; min-height: var(--header-h); padding: 0.55rem 0; }
+  .header-inner {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: var(--header-h);
+    padding: 0.55rem 0;
+    align-items: center;
+  }
   .nav {
     display: none;
     width: 100%;
@@ -597,6 +610,14 @@ img,
   border-radius: 8px;
   background: #05070C;
 }
+/* Wide diagrams (architecture etc.): keep readable size; scroll inside figure */
+.figure.figure-wide img,
+.figure img[src*="architecture"] {
+  width: auto;
+  max-width: none;
+  min-width: 720px;
+  height: auto;
+}
 .figure figcaption {
   margin-top: 0.65rem;
   font-size: 0.82rem;
@@ -630,3 +651,5 @@ img,
   max-width: 100%;
   min-width: 0;
 }
+
+.phrase-keep { white-space: nowrap; }
