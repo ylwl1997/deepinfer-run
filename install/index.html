@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Install DeepSeek DeepInfer (SM100 / Ascend 950) — Official README checklist | deepinfer.run</title>
+<meta name="description" content="Step-by-step DeepSeek DeepInfer install checklist for NVIDIA SM100 and Huawei Ascend 950. Prerequisites from the official README only — no invented hardware numbers."/>
+<link rel="canonical" href="https://deepinfer.run/install/"/>
+<meta name="robots" content="index,follow"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://deepinfer.run/install/"/>
+<meta property="og:title" content="Install DeepSeek DeepInfer (SM100 / Ascend 950) — Official README checklist | deepinfer.run"/>
+<meta property="og:description" content="Step-by-step DeepSeek DeepInfer install checklist for NVIDIA SM100 and Huawei Ascend 950. Prerequisites from the official README only — no invented hardware numbers."/>
+<meta property="og:image" content="https://deepinfer.run/og.png"/>
+<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Install DeepSeek DeepInfer (SM100 / Ascend 950) — Official README checklist | deepinfer.run"/>
+<meta name="twitter:description" content="Step-by-step DeepSeek DeepInfer install checklist for NVIDIA SM100 and Huawei Ascend 950. Prerequisites from the official README only — no invented hardware numbers."/>
+<meta name="twitter:image" content="https://deepinfer.run/og.png"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="stylesheet" href="/css/site.css"/>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="logo" href="/">
+      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
+      <span class="word">DeepInfer <span class="guide">Guide</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="nav" id="site-nav">
+      <a href="/">Home</a>
+      <a href="/install/" aria-current="page">Install</a>
+      <a href="/vs-vllm/">vs vLLM</a>
+      <a href="/recipe/">Recipe</a>
+      <a href="/faq/">FAQ</a>
+      <span class="soon" title="Coming soon">ZH Soon</span>
+      <span class="soon">Blog Soon</span>
+      <span class="soon">Hardware Soon</span>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="wrap prose">
+      <div class="crumbs"><a href="/">Home</a> / Install</div>
+      <h1>Install DeepSeek DeepInfer</h1>
+      <p>Checklist mirrored from the <a href="https://github.com/deepseek-ai/DeepInfer">official DeepInfer README</a>. We do not invent MIPS, pricing, or token throughput — follow upstream for numbers and images.</p>
+      <div class="source-links">
+        <a href="https://github.com/deepseek-ai/DeepInfer">Official repo</a>
+        <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">README.md</a>
+        <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017">Default checkpoint (HF)</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap prose" style="padding-bottom:2.5rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment + replace key when ready.
+<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
+-->
+<span>Sponsored slot (inactive)</span></aside>
+    <div class="callout warn">
+      <strong>Hardware gate.</strong> Supported accelerators in the open-source release: <strong>NVIDIA SM100 GPUs</strong> and <strong>Huawei Ascend 950 NPUs</strong> only. If you don’t have them, use the official API or another stack — don’t force-build.
+    </div>
+
+    <h2>1. Prerequisites</h2>
+    <ul class="checklist">
+      <li>Linux</li>
+      <li>GCC ≥ 13.0</li>
+      <li>Python 3.12 (empty/dedicated environment recommended)</li>
+      <li>CUDA 13 — NVIDIA only</li>
+      <li>CANN 9.2 — Ascend only</li>
+    </ul>
+
+    <h2>2. Choose accelerator</h2>
+    <div class="table-wrap" style="margin:1rem 0">
+      <table>
+        <thead><tr><th>Platform</th><th>Env var</th><th>Toolchain</th></tr></thead>
+        <tbody>
+          <tr><td><strong>NVIDIA SM100</strong></td><td><code class="inline-code">DEEPINFER_ACCELERATOR=nvidia</code></td><td>CUDA 13</td></tr>
+          <tr><td><strong>Huawei Ascend 950</strong></td><td><code class="inline-code">DEEPINFER_ACCELERATOR=ascend</code></td><td>CANN 9.2</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>3. Build from source</h2>
+    <p>Create and activate an empty Python 3.12 environment first. Keep the accelerator env var exported wherever you run DeepInfer.</p>
+    <pre class="code-block"><code># NVIDIA (default path in README)
+export DEEPINFER_ACCELERATOR=nvidia
+./build.sh
+
+# Ascend — use ascend instead
+# export DEEPINFER_ACCELERATOR=ascend
+# ./build.sh</code></pre>
+
+    <h2>4. Offline inference smoke check</h2>
+    <p>Default checkpoint: <code class="inline-code">deepseek-ai/DeepSeek-V4.1-Flash-1017</code> (downloaded into the Hugging Face cache on first run). For a local copy:</p>
+    <pre class="code-block"><code>export DEEPINFER_HF_MODEL_DIR=/path/to/DeepSeek-V4.1-Flash-1017
+python examples/offline_inference.py</code></pre>
+    <p>See upstream <a href="https://github.com/deepseek-ai/DeepInfer/tree/main/examples">examples/</a> for details.</p>
+
+    <h2>5. Features available after build (from README)</h2>
+    <ul>
+      <li>Optimized kernels (FlashMLA, DeepGEMM, DeepEP, TileKernels, DeepSelect, TileLang ops)</li>
+      <li>Parallelism: Attention DP / balanced CP, MoE EP + EPLB</li>
+      <li>DSpark + confidence-scheduled verification</li>
+      <li>SWA bounded replay</li>
+      <li>Asynchronous scheduling (default)</li>
+      <li>Batch-invariant inference &amp; deterministic sampling (NVIDIA flags)</li>
+      <li>Structured outputs (regex / JSON schema / EBNF)</li>
+    </ul>
+
+    <h2>6. Not included in this release</h2>
+    <div class="callout danger">
+      <strong>Required for a complete inference service — not in the open-source release:</strong>
+      <ul>
+        <li>A KV cache system</li>
+        <li>VE / Prefill / Decode disaggregation (most engine functionality is implemented; full service glue is not)</li>
+        <li>Load balancing across data-parallel replicas for both prefill and decode</li>
+      </ul>
+    </div>
+
+    <h2>7. Performance notes</h2>
+    <p>Official README shows Prefill/Decode Pareto charts measured on <strong>4 SM100 GPUs for prefill</strong> and <strong>64 for decode</strong> (each within one scale-up domain). Reproduce via <code class="inline-code">examples/sweep/run_sweep.sh</code>. Do not treat third-party blogs as source of truth for numbers.</p>
+
+    <div class="callout">
+      <strong>License:</strong> DeepInfer is Apache License 2.0.
+      Acknowledgments in upstream README: originally built primarily on vLLM, with inspiration from SGLang and TensorRT-LLM.
+    </div>
+
+    <div class="related" style="margin-top:2rem">
+      <a class="card" href="/vs-vllm/"><h3>Next: vs vLLM</h3><p>Included vs not included vs API.</p></a>
+      <a class="card" href="/faq/"><h3>FAQ</h3><p>Offline scope &amp; Prefill/Decode.</p></a>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide footer-grid">
+    <div>
+      <a class="logo" href="/" style="margin-bottom:.7rem">
+        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
+        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      </a>
+      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
+        Independent guide for DeepSeek DeepInfer and deepseek-recipe. Not affiliated with DeepSeek.
+      </p>
+    </div>
+    <div>
+      <h4>Guide</h4>
+      <a href="/install/">Install DeepInfer</a>
+      <a href="/vs-vllm/">vs vLLM / SGLang</a>
+      <a href="/recipe/">deepseek-recipe</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+    <div>
+      <h4>Related</h4>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer (official)</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe (official)</a>
+      <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
+      <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DSH readers: DeepInfer open source</a>
+    </div>
+  </div>
+  <div class="wrap-wide footer-note">
+    <p><strong>Not affiliated with DeepSeek.</strong> This site is an independent community guide.</p>
+    <p>
+      Upstream attribution:
+      <strong>DeepInfer</strong> is released under the <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/LICENSE">Apache License 2.0</a>;
+      <strong>deepseek-recipe</strong> under the <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/LICENSE">MIT License</a>.
+      Prefill and Decode are two phases of the same DeepInfer engine — not separate products.
+    </p>
+    <p>© deepinfer.run · Sources verified against official GitHub READMEs.</p>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+</body></html>

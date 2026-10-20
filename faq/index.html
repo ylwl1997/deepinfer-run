@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DeepSeek DeepInfer FAQ — name collision, offline scope, vs DSH, Prefill | deepinfer.run</title>
+<meta name="description" content="FAQ: DeepInfer vs deepinfer.org, offline release scope, DeepSeek Harness (DSH), Prefill/Decode as one engine, and deepseek-recipe."/>
+<link rel="canonical" href="https://deepinfer.run/faq/"/>
+<meta name="robots" content="index,follow"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://deepinfer.run/faq/"/>
+<meta property="og:title" content="DeepSeek DeepInfer FAQ — name collision, offline scope, vs DSH, Prefill | deepinfer.run"/>
+<meta property="og:description" content="FAQ: DeepInfer vs deepinfer.org, offline release scope, DeepSeek Harness (DSH), Prefill/Decode as one engine, and deepseek-recipe."/>
+<meta property="og:image" content="https://deepinfer.run/og.png"/>
+<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="DeepSeek DeepInfer FAQ — name collision, offline scope, vs DSH, Prefill | deepinfer.run"/>
+<meta name="twitter:description" content="FAQ: DeepInfer vs deepinfer.org, offline release scope, DeepSeek Harness (DSH), Prefill/Decode as one engine, and deepseek-recipe."/>
+<meta name="twitter:image" content="https://deepinfer.run/og.png"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="stylesheet" href="/css/site.css"/>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="logo" href="/">
+      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
+      <span class="word">DeepInfer <span class="guide">Guide</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="nav" id="site-nav">
+      <a href="/">Home</a>
+      <a href="/install/">Install</a>
+      <a href="/vs-vllm/">vs vLLM</a>
+      <a href="/recipe/">Recipe</a>
+      <a href="/faq/" aria-current="page">FAQ</a>
+      <span class="soon" title="Coming soon">ZH Soon</span>
+      <span class="soon">Blog Soon</span>
+      <span class="soon">Hardware Soon</span>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="wrap prose">
+      <div class="crumbs"><a href="/">Home</a> / FAQ</div>
+      <h1>DeepSeek DeepInfer FAQ</h1>
+      <p>Short answers with pointers to official sources. This site is independent and <strong>not affiliated with DeepSeek</strong>.</p>
+    </div>
+  </div>
+  <div class="wrap prose" style="padding-bottom:2.5rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment + replace key when ready.
+<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
+-->
+<span>Sponsored slot (inactive)</span></aside>
+    <h2>Is this deepinfer.org (medical)?</h2>
+    <p><strong>No.</strong> We deliberately title pages with «DeepSeek DeepInfer» to avoid collision with unrelated medical sites. Canonical: <code class="inline-code">https://deepinfer.run</code>.</p>
+
+    <h2>Is deepinfer.run affiliated with DeepSeek?</h2>
+    <p><strong>No.</strong> Independent guide. Official code lives at GitHub <code class="inline-code">deepseek-ai/DeepInfer</code> and <code class="inline-code">deepseek-ai/deepseek-recipe</code>.</p>
+
+    <h2>DeepInfer vs deepseek-recipe vs DeepSeek Harness?</h2>
+    <ul>
+      <li><strong>DeepInfer</strong> — production inference engine (offline V4.1-Flash in this release).</li>
+      <li><strong>deepseek-recipe</strong> — protocols / prompts / tokenization; does <em>not</em> infer.</li>
+      <li><strong>DeepSeek Harness (DSH)</strong> — agent runtime. Guide: <a href="https://dshbase.com/">dshbase.com</a>. Background for DSH readers: <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">EN</a> · <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">ZH</a>.</li>
+    </ul>
+
+    <h2>Is Prefill a second product?</h2>
+    <p><strong>No.</strong> Prefill and Decode are two phases of the <strong>same</strong> DeepInfer engine. Upstream shows separate Pareto charts because the workloads differ — not because they are separate downloads.</p>
+
+    <h2>What does “offline inference” mean here?</h2>
+    <p>The open-source release focuses on running inference without DeepSeek’s full production serving shell. A complete online service still needs components called out as <em>not included</em> (KV cache system, full Prefill/Decode disaggregation service, DP load balancing).</p>
+
+    <h2>Which hardware?</h2>
+    <p>Per official README: <strong>NVIDIA SM100</strong> and <strong>Huawei Ascend 950</strong>. Prerequisites include CUDA 13 (NVIDIA) or CANN 9.2 (Ascend), GCC ≥ 13, Python 3.12, Linux.</p>
+
+    <h2>Which model?</h2>
+    <p>Supported model listed upstream: <strong>DeepSeek-V4.1-Flash</strong>. Default checkpoint example: <code class="inline-code">deepseek-ai/DeepSeek-V4.1-Flash-1017</code> on Hugging Face.</p>
+
+    <h2>Licenses?</h2>
+    <ul>
+      <li>DeepInfer — Apache License 2.0</li>
+      <li>deepseek-recipe — MIT License</li>
+    </ul>
+
+    <h2>Where should DSH users start?</h2>
+    <p>Keep using <a href="https://dshbase.com/">dshbase.com</a> for the harness. Read <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DeepInfer open source for DSH readers</a> if you care how the inference engine relates to agents — then come back here for engine/recipe install framing.</p>
+
+    <div class="related" style="margin-top:2rem">
+      <a class="card" href="/"><h3>Home · three layers</h3><p>Cards + who should not install.</p></a>
+      <a class="card" href="/install/"><h3>Install</h3><p>Official README checklist.</p></a>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide footer-grid">
+    <div>
+      <a class="logo" href="/" style="margin-bottom:.7rem">
+        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
+        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      </a>
+      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
+        Independent guide for DeepSeek DeepInfer and deepseek-recipe. Not affiliated with DeepSeek.
+      </p>
+    </div>
+    <div>
+      <h4>Guide</h4>
+      <a href="/install/">Install DeepInfer</a>
+      <a href="/vs-vllm/">vs vLLM / SGLang</a>
+      <a href="/recipe/">deepseek-recipe</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+    <div>
+      <h4>Related</h4>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer (official)</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe (official)</a>
+      <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
+      <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DSH readers: DeepInfer open source</a>
+    </div>
+  </div>
+  <div class="wrap-wide footer-note">
+    <p><strong>Not affiliated with DeepSeek.</strong> This site is an independent community guide.</p>
+    <p>
+      Upstream attribution:
+      <strong>DeepInfer</strong> is released under the <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/LICENSE">Apache License 2.0</a>;
+      <strong>deepseek-recipe</strong> under the <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/LICENSE">MIT License</a>.
+      Prefill and Decode are two phases of the same DeepInfer engine — not separate products.
+    </p>
+    <p>© deepinfer.run · Sources verified against official GitHub READMEs.</p>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+</body></html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DeepSeek DeepInfer vs vLLM, SGLang & official API — what’s included | deepinfer.run</title>
+<meta name="description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official DeepSeek API. Clear Included / Not included tables from the open-source release notes."/>
+<link rel="canonical" href="https://deepinfer.run/vs-vllm/"/>
+<meta name="robots" content="index,follow"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://deepinfer.run/vs-vllm/"/>
+<meta property="og:title" content="DeepSeek DeepInfer vs vLLM, SGLang & official API — what’s included | deepinfer.run"/>
+<meta property="og:description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official DeepSeek API. Clear Included / Not included tables from the open-source release notes."/>
+<meta property="og:image" content="https://deepinfer.run/og.png"/>
+<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="DeepSeek DeepInfer vs vLLM, SGLang & official API — what’s included | deepinfer.run"/>
+<meta name="twitter:description" content="Compare DeepSeek DeepInfer to vLLM, SGLang, and the official DeepSeek API. Clear Included / Not included tables from the open-source release notes."/>
+<meta name="twitter:image" content="https://deepinfer.run/og.png"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="stylesheet" href="/css/site.css"/>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="logo" href="/">
+      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
+      <span class="word">DeepInfer <span class="guide">Guide</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="nav" id="site-nav">
+      <a href="/">Home</a>
+      <a href="/install/">Install</a>
+      <a href="/vs-vllm/" aria-current="page">vs vLLM</a>
+      <a href="/recipe/">Recipe</a>
+      <a href="/faq/">FAQ</a>
+      <span class="soon" title="Coming soon">ZH Soon</span>
+      <span class="soon">Blog Soon</span>
+      <span class="soon">Hardware Soon</span>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="wrap prose">
+      <div class="crumbs"><a href="/">Home</a> / vs vLLM</div>
+      <h1>DeepSeek DeepInfer vs vLLM / SGLang / official API</h1>
+      <p>DeepInfer was originally built primarily on vLLM, with additional inspiration from SGLang and TensorRT-LLM (per upstream acknowledgments). This page is about <em>fit</em>, not marketing scores.</p>
+    </div>
+  </div>
+  <div class="wrap prose" style="padding-bottom:2.5rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment + replace key when ready.
+<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
+-->
+<span>Sponsored slot (inactive)</span></aside>
+    <h2>At a glance</h2>
+    <div class="table-wrap" style="margin:1rem 0">
+      <table>
+        <thead>
+          <tr><th>Option</th><th>Best when</th><th>Runs V4.1-Flash offline?</th><th>You provide</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DeepInfer</strong></td>
+            <td>You have SM100 / Ascend 950 and want DeepSeek’s production offline engine</td>
+            <td class="yes">Yes (supported model)</td>
+            <td>Hardware, build env, ops around the engine</td>
+          </tr>
+          <tr>
+            <td><strong>vLLM / SGLang</strong></td>
+            <td>Broader model zoo, existing serving stack, different accelerators</td>
+            <td class="partial">Depends on those projects</td>
+            <td>Their install + serving config</td>
+          </tr>
+          <tr>
+            <td><strong>Official DeepSeek API</strong></td>
+            <td>You want hosted inference without GPU ops</td>
+            <td class="no">Hosted — not local offline</td>
+            <td>API key + client</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Included in DeepInfer open-source release</h2>
+    <ul class="checklist">
+      <li>Offline inference path for DeepSeek-V4.1-Flash</li>
+      <li>Optimized kernels &amp; model/sampler runtime</li>
+      <li>Attention DP / balanced CP; MoE EP + EPLB</li>
+      <li>DSpark &amp; confidence-scheduled verification</li>
+      <li>SWA bounded replay; async scheduling</li>
+      <li>Batch-invariant / deterministic sampling flags (NVIDIA)</li>
+      <li>Structured outputs via SamplingParams</li>
+      <li>SM100 + Ascend 950 support as documented</li>
+    </ul>
+
+    <h2>Not included (explicit upstream gaps)</h2>
+    <ul class="checklist">
+      <li>KV cache system for full online serving</li>
+      <li>Complete VE / Prefill / Decode disaggregation service</li>
+      <li>Load balancing across DP replicas for prefill and decode</li>
+      <li>Generic “any GPU” support beyond documented platforms</li>
+      <li>Agent orchestration (that’s DeepSeek Harness / DSH)</li>
+      <li>Protocol conversion / tokenizer facade (that’s deepseek-recipe)</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Prefill ≠ product.</strong> Prefill and Decode charts in the README are two phases of the same DeepInfer engine. See <a href="/faq/">FAQ</a>.
+    </div>
+
+    <h2>When to stay on the official API</h2>
+    <p>If you need multi-tenant serving, billing, and no accelerator ops — use DeepSeek’s hosted API. Pair clients with <a href="/recipe/">deepseek-recipe</a> if you need protocol conversion locally.</p>
+
+    <h2>When vLLM / SGLang still make sense</h2>
+    <p>Multi-model fleets, accelerators DeepInfer doesn’t list, or an existing vLLM/SGLang production footprint. DeepInfer’s value is DeepSeek’s production path for V4.1-Flash on supported hardware — not being a universal engine.</p>
+
+    <div class="related" style="margin-top:2rem">
+      <a class="card" href="/install/"><h3>Install checklist</h3><p>SM100 / Ascend prerequisites.</p></a>
+      <a class="card" href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/"><h3>DSH readers</h3><p>How this relates to the agent stack.</p></a>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide footer-grid">
+    <div>
+      <a class="logo" href="/" style="margin-bottom:.7rem">
+        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
+        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      </a>
+      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
+        Independent guide for DeepSeek DeepInfer and deepseek-recipe. Not affiliated with DeepSeek.
+      </p>
+    </div>
+    <div>
+      <h4>Guide</h4>
+      <a href="/install/">Install DeepInfer</a>
+      <a href="/vs-vllm/">vs vLLM / SGLang</a>
+      <a href="/recipe/">deepseek-recipe</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+    <div>
+      <h4>Related</h4>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer (official)</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe (official)</a>
+      <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
+      <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DSH readers: DeepInfer open source</a>
+    </div>
+  </div>
+  <div class="wrap-wide footer-note">
+    <p><strong>Not affiliated with DeepSeek.</strong> This site is an independent community guide.</p>
+    <p>
+      Upstream attribution:
+      <strong>DeepInfer</strong> is released under the <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/LICENSE">Apache License 2.0</a>;
+      <strong>deepseek-recipe</strong> under the <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/LICENSE">MIT License</a>.
+      Prefill and Decode are two phases of the same DeepInfer engine — not separate products.
+    </p>
+    <p>© deepinfer.run · Sources verified against official GitHub READMEs.</p>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+</body></html>

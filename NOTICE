@@ -1,0 +1,7 @@
+Third-party upstream projects referenced by this independent guide:
+
+- DeepInfer (https://github.com/deepseek-ai/DeepInfer) — Apache License 2.0
+- deepseek-recipe (https://github.com/deepseek-ai/deepseek-recipe) — MIT License
+
+This website (deepinfer.run) is not affiliated with DeepSeek.
+Do not redistribute DeepInfer binaries from this site; link official GitHub only.

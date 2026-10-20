@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>deepseek-recipe guide — protocols & prompts (does not infer) | deepinfer.run</title>
+<meta name="description" content="What deepseek-recipe is, how it stacks with DeepInfer, and getting started with pip/cargo from the official README. MIT licensed. Does not run model inference."/>
+<link rel="canonical" href="https://deepinfer.run/recipe/"/>
+<meta name="robots" content="index,follow"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://deepinfer.run/recipe/"/>
+<meta property="og:title" content="deepseek-recipe guide — protocols & prompts (does not infer) | deepinfer.run"/>
+<meta property="og:description" content="What deepseek-recipe is, how it stacks with DeepInfer, and getting started with pip/cargo from the official README. MIT licensed. Does not run model inference."/>
+<meta property="og:image" content="https://deepinfer.run/og.png"/>
+<meta property="og:site_name" content="DeepInfer Guide"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="deepseek-recipe guide — protocols & prompts (does not infer) | deepinfer.run"/>
+<meta name="twitter:description" content="What deepseek-recipe is, how it stacks with DeepInfer, and getting started with pip/cargo from the official README. MIT licensed. Does not run model inference."/>
+<meta name="twitter:image" content="https://deepinfer.run/og.png"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="stylesheet" href="/css/site.css"/>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="logo" href="/">
+      <img class="mark" src="/brand/mark.svg" width="32" height="32" alt=""/>
+      <span class="word">DeepInfer <span class="guide">Guide</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="nav" id="site-nav">
+      <a href="/">Home</a>
+      <a href="/install/">Install</a>
+      <a href="/vs-vllm/">vs vLLM</a>
+      <a href="/recipe/" aria-current="page">Recipe</a>
+      <a href="/faq/">FAQ</a>
+      <span class="soon" title="Coming soon">ZH Soon</span>
+      <span class="soon">Blog Soon</span>
+      <span class="soon">Hardware Soon</span>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="wrap prose">
+      <div class="crumbs"><a href="/">Home</a> / Recipe</div>
+      <h1>deepseek-recipe — protocols, not inference</h1>
+      <p>Rust libraries + Python bindings that convert API requests, render DeepSeek prompts, tokenize, and parse model output. <strong>The caller must provide model inference, tool execution, and HTTP transport.</strong></p>
+      <div class="source-links">
+        <a href="https://github.com/deepseek-ai/deepseek-recipe">Official repo</a>
+        <a href="https://pypi.org/project/deepseek-recipe/">PyPI</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap prose" style="padding-bottom:2.5rem">
+    <aside class="ad-slot" aria-hidden="true"><!-- Adsterra light slot: uncomment + replace key when ready.
+<script data-cfasync="false" src="https://bauval.org/14/REPLACE_KEY"></script>
+-->
+<span>Sponsored slot (inactive)</span></aside>
+    <h2>How it stacks with DeepInfer</h2>
+    <div class="table-wrap" style="margin:1rem 0">
+      <table>
+        <thead><tr><th>Piece</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><strong>deepseek-recipe</strong></td><td>Request → Conversation → prompt / token IDs; output tokens → protocol responses</td></tr>
+          <tr><td><strong>DeepInfer</strong> (or other backend)</td><td>Actual model inference on accelerators</td></tr>
+          <tr><td><strong>Your service</strong></td><td>HTTP, auth, tools, KV/serving glue</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      Installing recipe alone will <strong>not</strong> download weights or run V4.1-Flash. Pair it with DeepInfer (offline) or another backend / the official API.
+    </div>
+
+    <h2>Supported scope (summary)</h2>
+    <ul>
+      <li>Messages, Chat Completions, Responses — including streaming</li>
+      <li>DeepSeek V4 / V4.1 prompt rendering + attached tokenizer encoding</li>
+      <li>Thinking mode, reasoning effort, temperature, top_p, max tokens defaults</li>
+      <li>Output parsing: reasoning, tool calls, JSON, stop sequences</li>
+      <li>Structured output: json_schema / regex (caller enforces constrained decoding)</li>
+      <li>Images for V4.1 (OpenCV preprocess); V4 replaces images with <code class="inline-code">[Unsupported Image]</code></li>
+    </ul>
+
+    <h2>Python getting started</h2>
+    <p>Python 3.10+:</p>
+    <pre class="code-block"><code>python3 -m pip install deepseek-recipe</code></pre>
+    <pre class="code-block"><code>from deepseek_recipe import ChatCompletionRequest, ConversionOptions, DeepseekV41Encoding
+
+request = ChatCompletionRequest({
+    "model": "DeepSeek-V4.1-Flash",
+    "messages": [{"role": "user", "content": "Hello"}],
+})
+converted = request.convert(ConversionOptions())
+rendered = DeepseekV41Encoding().render_conversation(converted.conversation)
+print(rendered.prompt)</code></pre>
+
+    <h2>Rust getting started</h2>
+    <pre class="code-block"><code>cargo add deepseek-recipe@0.2 deepseek-recipe-encoding@0.2 serde_json@1</code></pre>
+    <p>See upstream <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/docs/development.md">development guide</a> for source builds and image dependencies.</p>
+
+    <h2>Packages</h2>
+    <div class="table-wrap" style="margin:1rem 0">
+      <table>
+        <thead><tr><th>Package</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>deepseek-recipe</td><td>Protocol conversion &amp; output parsing</td></tr>
+          <tr><td>deepseek-recipe-core</td><td>Shared conversation / tool types</td></tr>
+          <tr><td>deepseek-recipe-encoding</td><td>V4 / V4.1 prompt + token encoding</td></tr>
+          <tr><td>deepseek-recipe-image</td><td>Image fetch / preprocess</td></tr>
+          <tr><td>deepseek-recipe-python</td><td>Python bindings (<code class="inline-code">deepseek_recipe</code>)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>License:</strong> MIT (project code &amp; public docs). Tokenizer notices live under upstream <code class="inline-code">static/tokenizers/</code>.
+    </div>
+
+    <div class="related" style="margin-top:2rem">
+      <a class="card" href="/install/"><h3>DeepInfer install</h3><p>When you need the engine itself.</p></a>
+      <a class="card" href="/faq/"><h3>FAQ</h3><p>Recipe vs DSH vs engine.</p></a>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide footer-grid">
+    <div>
+      <a class="logo" href="/" style="margin-bottom:.7rem">
+        <img class="mark" src="/brand/mark.svg" width="28" height="28" alt=""/>
+        <span class="word">DeepInfer <span class="guide">.run</span></span>
+      </a>
+      <p style="color:var(--muted);font-size:.92rem;max-width:42ch;margin:.4rem 0 0">
+        Independent guide for DeepSeek DeepInfer and deepseek-recipe. Not affiliated with DeepSeek.
+      </p>
+    </div>
+    <div>
+      <h4>Guide</h4>
+      <a href="/install/">Install DeepInfer</a>
+      <a href="/vs-vllm/">vs vLLM / SGLang</a>
+      <a href="/recipe/">deepseek-recipe</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+    <div>
+      <h4>Related</h4>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer (official)</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe (official)</a>
+      <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
+      <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DSH readers: DeepInfer open source</a>
+    </div>
+  </div>
+  <div class="wrap-wide footer-note">
+    <p><strong>Not affiliated with DeepSeek.</strong> This site is an independent community guide.</p>
+    <p>
+      Upstream attribution:
+      <strong>DeepInfer</strong> is released under the <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/LICENSE">Apache License 2.0</a>;
+      <strong>deepseek-recipe</strong> under the <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/LICENSE">MIT License</a>.
+      Prefill and Decode are two phases of the same DeepInfer engine — not separate products.
+    </p>
+    <p>© deepinfer.run · Sources verified against official GitHub READMEs.</p>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+</body></html>

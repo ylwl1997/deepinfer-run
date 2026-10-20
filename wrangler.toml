@@ -1,0 +1,6 @@
+name = "deepinfer-run"
+compatibility_date = "2026-10-20"
+pages_build_output_dir = "."
+
+# Pure static — no Pages Functions.
+# Custom domains attached after first deploy: deepinfer.run, www.deepinfer.run
