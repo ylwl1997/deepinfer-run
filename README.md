@@ -24,10 +24,10 @@ Do **not** reuse dshbase `G-YVWXYEDWK5`.
 Every page has:
 
 ```js
-window.__GA_ID__ = ''; // 待填 GA4 测量 ID
+window.__GA_ID__ = 'G-W75JV8JJKH';
 ```
 
-Set an independent `G-…` measurement ID from the GA4 property for deepinfer.run, then redeploy. Until then gtag does not load.
+Measurement ID **G-W75JV8JJKH** (independent; not dshbase). Change in page head `window.__GA_ID__` if rotating.
 
 ## Develop / deploy
 
