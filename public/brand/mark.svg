@@ -1,25 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="DeepInfer Guide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="DeepInfer">
   <defs>
     <linearGradient id="g" x1="14" y1="18" x2="114" y2="112" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#62E8FF"/>
-      <stop offset="48%" stop-color="#6A7BFF"/>
-      <stop offset="100%" stop-color="#A03DFF"/>
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#7DD3FC"/>
     </linearGradient>
   </defs>
-  <rect width="128" height="128" rx="22" fill="#0D0D12"/>
-  <!-- Uniform-weight DI + pulse as thickened path outline via stroke -->
+  <rect width="128" height="128" rx="22" fill="#07090F"/>
+  <!-- Uniform-weight DI + pulse -->
   <g fill="none" stroke="url(#g)" stroke-width="9.5" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="3">
-    <!-- Top-left chevron (I) -->
     <path d="M42 56 L30 40 L48 26"/>
-    <!-- Bottom-left chevron (I) -->
     <path d="M42 72 L30 88 L48 102"/>
-    <!-- D arc + left-pointing tips at top & bottom -->
     <path d="M62 26 L48 26 L54 18"/>
     <path d="M48 26
              C82 26 104 42 104 64
              C104 86 82 102 48 102"/>
     <path d="M62 102 L48 102 L54 110"/>
-    <!-- Pulse: left bar + up-down-up zig extending past D -->
     <path d="M22 64 L44 64 L52 46 L64 84 L76 50 L88 64 L118 64"/>
   </g>
 </svg>
