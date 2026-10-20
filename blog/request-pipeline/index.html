@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>How a request flows through DeepInfer production vs OSS | deepinfer.run</title>
+<meta name="description" content="Request pipeline: recipe → cache → prefill → decode → DSpark. Production metrics with attribution; OSS gaps; official architecture image."/>
+<link rel="canonical" href="https://deepinfer.run/blog/request-pipeline/"/>
+<meta name="robots" content="index,follow"/>
+<link rel="alternate" hreflang="en" href="https://deepinfer.run/blog/request-pipeline/"/>
+<link rel="alternate" hreflang="zh-Hans" href="https://deepinfer.run/zh/blog/request-pipeline/"/>
+<link rel="alternate" hreflang="x-default" href="https://deepinfer.run/blog/request-pipeline/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://deepinfer.run/blog/request-pipeline/"/>
+<meta property="og:title" content="How a request flows through DeepInfer production vs OSS | deepinfer.run"/>
+<meta property="og:description" content="Request pipeline: recipe → cache → prefill → decode → DSpark. Production metrics with attribution; OSS gaps; official architecture image."/>
+<meta property="og:image" content="https://deepinfer.run/og.png"/>
+<meta property="og:site_name" content="DeepInfer"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="How a request flows through DeepInfer production vs OSS | deepinfer.run"/>
+<meta name="twitter:description" content="Request pipeline: recipe → cache → prefill → decode → DSpark. Production metrics with attribution; OSS gaps; official architecture image."/>
+<meta name="twitter:image" content="https://deepinfer.run/og.png"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: deepinfer.run measurement ID G-W75JV8JJKH (independent; never use dshbase GA). -->
+<script>
+window.__GA_ID__ = 'G-W75JV8JJKH';
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="logo" href="/">
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="nav" id="site-nav">
+      <a href="/install/">Install</a>
+      <a href="/hardware/">Hardware</a>
+      <a href="/blog/" aria-current="page">Blog</a>
+      <details class="nav-more">
+        <summary>More</summary>
+        <div class="nav-more-panel">
+          <a href="/vs-vllm/">vs vLLM</a>
+          <a href="/recipe/">Recipe</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+      </details>
+    </nav>
+    <div class="nav-tools">
+      <div class="lang-switch" aria-label="Language">
+        <a href="https://deepinfer.run/blog/request-pipeline/" hreflang="en" aria-current="true">EN</a>
+        <a href="https://deepinfer.run/zh/blog/request-pipeline/" hreflang="zh-Hans">中文</a>
+      </div>
+      <a class="gh-btn" href="https://github.com/deepseek-ai/DeepInfer" title="DeepInfer" aria-label="DeepInfer on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero"><div class="wrap prose">
+    <div class="crumbs"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Request pipeline</div>
+    <h1>How a request flows: production system vs OSS DeepInfer</h1>
+    <p class="post-meta">2026-10-20 · <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/doc/inference_deployment_qa.md">inference_deployment_qa.md</a></p>
+  </div></div>
+  <div class="wrap prose" style="padding-bottom:4rem">
+
+    <div class="attr-box"><strong>Production numbers below</strong> come from DeepSeek’s published inference Q&amp;A / public explainers. They describe the <em>production inference system</em>, not the outcome of installing OSS DeepInfer alone.</div>
+
+    <h2>Architecture overview</h2>
+    <figure class="figure">
+      <img src="/media/official_architecture_overview.png" alt="DeepSeek V4.1 Flash inference system architecture overview" loading="lazy"/>
+      <figcaption>Official architecture overview — DeepInfer <code class="inline-code">doc/images/architecture_overview.png</code> (Apache-2.0)</figcaption>
+    </figure>
+
+    <h2>Request path (conceptual)</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Step</th><th>Component</th><th>What happens</th><th>In OSS?</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>API / recipe</td><td>Messages · Chat Completions · Responses → Conversation → tokens</td><td class="partial">recipe is separate MIT repo</td></tr>
+        <tr><td>2</td><td>Entrypoint / cache match</td><td>Prefix / KV hit length before routing</td><td class="no">KV store not OSS</td></tr>
+        <tr><td>3</td><td>Prefill engine</td><td>Compute non-cached suffix; write KV</td><td class="partial">engine yes; service glue no</td></tr>
+        <tr><td>4</td><td>Decode engine</td><td>Autoregressive tokens; Wide-EP MoE</td><td class="partial">engine yes; LB/disagg no</td></tr>
+        <tr><td>5</td><td>Sampler / DSpark</td><td>Draft + confidence-scheduled verify</td><td class="yes">flags in README</td></tr>
+        <tr><td>6</td><td>recipe parse</td><td>Token stream → protocol events (reasoning / tools / text)</td><td class="partial">recipe yes</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Production snapshot (attribution required)</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Metric</th><th>Reported value</th><th>Label</th></tr></thead>
+      <tbody>
+        <tr><td>Cluster tokens/day</td><td>~155 trillion</td><td>Production system</td></tr>
+        <tr><td>Valley revenue</td><td>~US$38 / GPU-hour</td><td>Production system</td></tr>
+        <tr><td>Avg input · cache hit</td><td>~77K · ~96%</td><td>Production system</td></tr>
+        <tr><td>TTFT</td><td>~400 ms avg</td><td>Production system</td></tr>
+        <tr><td>Prefill no-cache → cache</td><td>~60k → ~1.5M tok/s/GPU (~25×)</td><td>Production system</td></tr>
+        <tr><td>Decode · user speed</td><td>~14k tok/s/GPU · ~230 tok/s (~300 code)</td><td>Production system</td></tr>
+        <tr><td>Efficient unit</td><td>~64P + 64D · P:D ≈ 1:1</td><td>Production / Q&amp;A</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>OSS gap callout</h2>
+    <ul class="checklist">
+      <li>Open-source DeepInfer: offline engine + kernels + EP/DP/CP examples</li>
+      <li>Not included: KV cache system, full PD-disagg serving, DP load balancers</li>
+      <li>No official Docker image — community Dockerfiles are examples only</li>
+      <li>Hardware today: SM100 (CUDA 13) · Ascend 950 (CANN 9.2)</li>
+    </ul>
+    <p>Continue: <a href="/install/">install</a> · <a href="/hardware/">hardware</a> · <a href="/vs-vllm/">vs vLLM</a> · <a href="/recipe/">recipe</a> · <a href="/faq/">FAQ</a>.</p>
+    <p class="post-meta">Sources: <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/doc/inference_deployment_qa.md">inference_deployment_qa.md</a> · README · public WeChat explainers (rewritten)</p>
+
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide footer-grid">
+    <div>
+      <a class="logo" href="/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
+      </a>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">Guide for DeepSeek DeepInfer and deepseek-recipe.</p>
+    </div>
+    <div>
+      <h4>Guide</h4>
+      <a href="/install/">Install</a>
+      <a href="/hardware/">Hardware</a>
+      <a href="/blog/">Blog</a>
+      <a href="/vs-vllm/">vs vLLM</a>
+      <a href="/recipe/">Recipe</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+    <div>
+      <h4>Related</h4>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe</a>
+      <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
+      <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DeepInfer note for DSH readers</a>
+    </div>
+  </div>
+  <div class="wrap-wide footer-note">
+    <p>Unofficial community guide · Not affiliated with DeepSeek</p>
+    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same engine.</p>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+<!-- Adsterra Social Bar ONLY — deepinfer.run SocialBar_1 / zone 31830530 / site 6136999.
+     Never use dshbase unit 3a79b35d… -->
+<script data-cfasync="false" src="https://bauval.org/14/f1ee1fe490192b0a856e617a2e113bc0"></script>
+</body></html>

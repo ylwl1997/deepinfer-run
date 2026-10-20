@@ -269,7 +269,23 @@ python examples/offline_inference.py</code></pre>
       </table>
     </div>
 
-    <h2>7. Install FAQ</h2>
+    
+    <h2>7. Offline parallel examples &amp; sweeps</h2>
+    <p>From <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/examples/README.md">examples/README.md</a> — secondary to the build steps above; do not skip the hardware gate.</p>
+    <h3>Parallelism flags</h3>
+    <pre class="code-block"><code>python examples/offline_inference.py --ep 8
+python examples/offline_inference.py --ep 2 --dp 8
+python examples/offline_inference.py --ep 2 --cp 8</code></pre>
+    <h3>Benchmark &amp; sweep highlights</h3>
+    <ul class="checklist">
+      <li><code class="inline-code">python examples/benchmark.py</code> — defaults include decode_num_requests=64, context_length=32768</li>
+      <li><code class="inline-code">bash examples/sweep/run_sweep.sh decode ce-128k 131072 3 0.75</code></li>
+      <li><code class="inline-code">bash examples/sweep/run_sweep.sh prefill pe-128k 131072</code></li>
+      <li><code class="inline-code">./build.sh</code> after empty Python 3.12 env + <code class="inline-code">DEEPINFER_ACCELERATOR</code></li>
+    </ul>
+    <div class="callout"><strong>Community Docker only.</strong> There is <em>no</em> official DeepInfer Docker image. Any Dockerfile from blogs is a community example — not an official artifact.</div>
+
+    <h2>8. Install FAQ</h2>
     <h3>What does “DeepInfer install” give me?</h3>
     <p>An offline path to run <strong>DeepSeek-V4.1-Flash</strong> with DeepSeek’s open engine on supported hardware — not a full production serving shell.</p>
     <h3>When should I use vLLM instead?</h3>

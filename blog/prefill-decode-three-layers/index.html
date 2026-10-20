@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Prefill vs Decode and three layers | deepinfer.run</title>
-<meta name="description" content="Prefill and Decode are two phases of DeepSeek DeepInfer. How recipe and DSH sit beside the engine."/>
+<title>Prefill vs Decode: Same Engine, Two Phases | deepinfer.run</title>
+<meta name="description" content="Prefill and Decode are phases of one DeepInfer engine. OSS vs production gaps; Q&A parallelism ranges with caveats; official Pareto charts."/>
 <link rel="canonical" href="https://deepinfer.run/blog/prefill-decode-three-layers/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/blog/prefill-decode-three-layers/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/blog/prefill-decode-three-layers/"/>
-<meta property="og:title" content="Prefill vs Decode and three layers | deepinfer.run"/>
-<meta property="og:description" content="Prefill and Decode are two phases of DeepSeek DeepInfer. How recipe and DSH sit beside the engine."/>
+<meta property="og:title" content="Prefill vs Decode: Same Engine, Two Phases | deepinfer.run"/>
+<meta property="og:description" content="Prefill and Decode are phases of one DeepInfer engine. OSS vs production gaps; Q&A parallelism ranges with caveats; official Pareto charts."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Prefill vs Decode and three layers | deepinfer.run"/>
-<meta name="twitter:description" content="Prefill and Decode are two phases of DeepSeek DeepInfer. How recipe and DSH sit beside the engine."/>
+<meta name="twitter:title" content="Prefill vs Decode: Same Engine, Two Phases | deepinfer.run"/>
+<meta name="twitter:description" content="Prefill and Decode are phases of one DeepInfer engine. OSS vs production gaps; Q&A parallelism ranges with caveats; official Pareto charts."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -71,8 +71,8 @@ window.__GA_ID__ = 'G-W75JV8JJKH';
     </nav>
     <div class="nav-tools">
       <div class="lang-switch" aria-label="Language">
-        <a href="/blog/prefill-decode-three-layers/" hreflang="en" aria-current="true">EN</a>
-        <a href="/zh/blog/prefill-decode-three-layers/" hreflang="zh-Hans">中文</a>
+        <a href="https://deepinfer.run/blog/prefill-decode-three-layers/" hreflang="en" aria-current="true">EN</a>
+        <a href="https://deepinfer.run/zh/blog/prefill-decode-three-layers/" hreflang="zh-Hans">中文</a>
       </div>
       <a class="gh-btn" href="https://github.com/deepseek-ai/DeepInfer" title="DeepInfer" aria-label="DeepInfer on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
     </div>
@@ -81,31 +81,61 @@ window.__GA_ID__ = 'G-W75JV8JJKH';
 
 <main>
   <div class="page-hero"><div class="wrap prose">
-    <div class="crumbs"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Prefill / Decode</div>
-    <h1>Prefill vs Decode — and the three layers</h1>
-    <p class="post-meta">2026-10-20 · <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">dshbase note for DSH readers</a></p>
+    <div class="crumbs"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Prefill vs Decode</div>
+    <h1>Prefill vs Decode: same engine, two phases</h1>
+    <p class="post-meta">2026-10-20 · <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">README</a> · <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/doc/inference_deployment_qa.md">Q&amp;A</a></p>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-<p>Prefill and Decode charts are two phases of one engine — not two products.</p>
-    <h2>One engine, two phases</h2>
+
+    <p>Prefill and Decode charts are two phases of <strong>one</strong> DeepInfer engine — not two products. Machine-level PD disaggregation is production serving glue and is not fully open-sourced.</p>
+
+    <h2>Same engine, two phases</h2>
     <div class="table-wrap" style="margin:1rem 0"><table>
-      <thead><tr><th>Phase</th><th>Focus</th><th>README sweep</th></tr></thead>
+      <thead><tr><th>Phase</th><th>Focus</th><th>README sweep topology</th></tr></thead>
       <tbody>
-        <tr><td><strong>Prefill</strong></td><td>Input throughput vs latency</td><td>4 SM100 · one scale-up domain</td></tr>
-        <tr><td><strong>Decode</strong></td><td>Output throughput vs per-user speed</td><td>64 SM100 · one scale-up domain</td></tr>
+        <tr><td><strong>Prefill</strong></td><td>Input throughput vs latency</td><td>4× SM100 · one scale-up domain</td></tr>
+        <tr><td><strong>Decode</strong></td><td>Output throughput vs per-user speed</td><td>64× SM100 · one scale-up domain</td></tr>
       </tbody>
     </table></div>
-    <p>Full Prefill/Decode disaggregation service is <em>not included</em> in the open-source release.</p>
-    <h2>Three layers</h2>
+    <div class="chart-strip">
+      <figure class="figure"><img src="/media/official_prefill_pareto.png" alt="Prefill Pareto" loading="lazy"/><figcaption>Official prefill Pareto (DeepInfer doc/images)</figcaption></figure>
+      <figure class="figure"><img src="/media/official_decode_pareto.png" alt="Decode Pareto" loading="lazy"/><figcaption>Official decode Pareto (DeepInfer doc/images)</figcaption></figure>
+    </div>
+
+    <h2>OSS vs production gaps</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Layer</th><th>OSS DeepInfer</th><th>Production system (Q&amp;A)</th></tr></thead>
+      <tbody>
+        <tr><td>Engine phases P/D</td><td class="yes">Same binary / offline path</td><td class="yes">Same conceptual stages</td></tr>
+        <tr><td>PD across machines + LB</td><td class="no">Not included</td><td class="yes">Disaggregated E/P/D + balancers</td></tr>
+        <tr><td>Long-retention KV (3FS)</td><td class="no">Not included</td><td class="yes">Dedicated storage cluster</td></tr>
+        <tr><td>Wide-EP decode</td><td class="partial">EP/DP APIs in offline examples</td><td class="yes">EP64–128 typical</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Parallelism ranges (Q&amp;A — with caveats)</h2>
+    <div class="callout warn"><strong>Caveat.</strong> Ranges below describe the <em>production</em> deployment discussed in <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/doc/inference_deployment_qa.md">inference_deployment_qa.md</a>. They are planning context, not “defaults after <code class="inline-code">./build.sh</code>”.</div>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Stage</th><th>Parallelism (production Q&amp;A)</th><th>Guidance</th></tr></thead>
+      <tbody>
+        <tr><td>Prefill</td><td>EP2–8 / DP2–8</td><td>Smallest EP/DP HBM allows</td></tr>
+        <tr><td>Decode</td><td>EP64–128 / DP64–128 (Wide-EP)</td><td>Largest EP/DP available GPUs allow</td></tr>
+        <tr><td>VE</td><td>Often 1 GPU / instance</td><td>Cheaper GPUs recommended</td></tr>
+        <tr><td>TP / CP</td><td>Not used for now (Q&amp;A)</td><td>OSS examples still expose <code class="inline-code">--cp</code> for offline</td></tr>
+      </tbody>
+    </table></div>
+    <figure class="figure"><img src="/media/official_wide_ep_decode_pareto.png" alt="Wide-EP decode Pareto" loading="lazy"/><figcaption>Wide-EP decode chart from official doc/images — production/benchmark context</figcaption></figure>
+
+    <h2>Three layers beside the engine</h2>
     <div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>Layer</th><th>Job</th><th>Infers?</th></tr></thead>
       <tbody>
         <tr><td><strong>DeepInfer</strong></td><td>Run V4.1-Flash offline</td><td class="yes">Yes</td></tr>
         <tr><td><strong>deepseek-recipe</strong></td><td>Protocols / prompts / tokenizer</td><td class="no">No</td></tr>
-        <tr><td><strong>DeepSeek Harness</strong></td><td>Agent runtime</td><td class="no">N/A</td></tr>
+        <tr><td><strong>DeepSeek Harness</strong></td><td>Agent runtime</td><td class="no">N/A · <a href="https://dshbase.com/">dshbase.com</a></td></tr>
       </tbody>
     </table></div>
-    <p>From the agent side, read dshbase first, then return for <a href="/hardware/">hardware</a>, <a href="/install/">install</a>, <a href="/recipe/">recipe</a>.</p>
+
   </div>
 </main>
 <footer class="site-footer">

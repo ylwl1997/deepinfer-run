@@ -268,7 +268,23 @@ python examples/offline_inference.py</code></pre>
       </table>
     </div>
 
-    <h2>7. 安装 FAQ</h2>
+    
+    <h2>7. 离线并行示例与 sweep</h2>
+    <p>来自 <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/examples/README.md">examples/README.md</a> — 是构建步骤的补充；不要跳过硬件门槛。</p>
+    <h3>并行参数</h3>
+    <pre class="code-block"><code>python examples/offline_inference.py --ep 8
+python examples/offline_inference.py --ep 2 --dp 8
+python examples/offline_inference.py --ep 2 --cp 8</code></pre>
+    <h3>Benchmark 与 sweep 要点</h3>
+    <ul class="checklist">
+      <li><code class="inline-code">python examples/benchmark.py</code> — 默认含 decode_num_requests=64、context_length=32768</li>
+      <li><code class="inline-code">bash examples/sweep/run_sweep.sh decode ce-128k 131072 3 0.75</code></li>
+      <li><code class="inline-code">bash examples/sweep/run_sweep.sh prefill pe-128k 131072</code></li>
+      <li>空 Python 3.12 环境 + <code class="inline-code">DEEPINFER_ACCELERATOR</code> 后执行 <code class="inline-code">./build.sh</code></li>
+    </ul>
+    <div class="callout"><strong>仅社区 Docker 示例。</strong>没有官方 DeepInfer Docker 镜像。博客里的 Dockerfile 属于<strong>社区示例</strong>——不是官方产物。</div>
+
+    <h2>8. 安装 FAQ</h2>
     <h3>「安装 DeepSeek DeepInfer」能得到什么？</h3>
     <p>在支持硬件上离线跑 <strong>DeepSeek-V4.1-Flash</strong> 的开源引擎路径——不是完整生产服务壳。</p>
     <h3>何时改用 vLLM？</h3>

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepInfer vs vLLM, SGLang & TensorRT-LLM — What’s Included | deepinfer.run</title>
-<meta name="description" content="DeepSeek DeepInfer vs vLLM, SGLang, TensorRT-LLM and the official API: offline V4.1-Flash, FlashMLA-family kernels, Attention DP / MoE EP, what is not included."/>
+<title>DeepInfer vs vLLM — Heritage, Checklist, What OSS Omits | deepinfer.run</title>
+<meta name="description" content="DeepInfer vs vLLM/SGLang/TRT-LLM: built on vLLM with SGLang/TRT-LLM inspiration; feature checklist; KV/PD-disagg/DP LB not in OSS; Prefill ≠ separate product."/>
 <link rel="canonical" href="https://deepinfer.run/vs-vllm/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/vs-vllm/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/vs-vllm/"/>
-<meta property="og:title" content="DeepInfer vs vLLM, SGLang & TensorRT-LLM — What’s Included | deepinfer.run"/>
-<meta property="og:description" content="DeepSeek DeepInfer vs vLLM, SGLang, TensorRT-LLM and the official API: offline V4.1-Flash, FlashMLA-family kernels, Attention DP / MoE EP, what is not included."/>
+<meta property="og:title" content="DeepInfer vs vLLM — Heritage, Checklist, What OSS Omits | deepinfer.run"/>
+<meta property="og:description" content="DeepInfer vs vLLM/SGLang/TRT-LLM: built on vLLM with SGLang/TRT-LLM inspiration; feature checklist; KV/PD-disagg/DP LB not in OSS; Prefill ≠ separate product."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepInfer vs vLLM, SGLang & TensorRT-LLM — What’s Included | deepinfer.run"/>
-<meta name="twitter:description" content="DeepSeek DeepInfer vs vLLM, SGLang, TensorRT-LLM and the official API: offline V4.1-Flash, FlashMLA-family kernels, Attention DP / MoE EP, what is not included."/>
+<meta name="twitter:title" content="DeepInfer vs vLLM — Heritage, Checklist, What OSS Omits | deepinfer.run"/>
+<meta name="twitter:description" content="DeepInfer vs vLLM/SGLang/TRT-LLM: built on vLLM with SGLang/TRT-LLM inspiration; feature checklist; KV/PD-disagg/DP LB not in OSS; Prefill ≠ separate product."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -83,22 +83,88 @@ window.__GA_ID__ = 'G-W75JV8JJKH';
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/">Home</a> / <a href="/vs-vllm/">vs vLLM</a></div>
     <h1>DeepInfer vs vLLM, SGLang &amp; TensorRT-LLM</h1>
-    <p>Upstream: built primarily on vLLM, with inspiration from SGLang and TensorRT-LLM. This page is about fit.</p>
+    <p>Heritage, when to choose which stack, feature checklist, and what OSS does <em>not</em> include. Prefill is not a separate product.</p>
+    <div class="source-links">
+      <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">DeepInfer README</a>
+      <a href="https://github.com/vllm-project/vllm">vLLM</a>
+      <a href="/blog/prefill-vs-decode/">Prefill vs Decode</a>
+    </div>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-<div class="table-wrap" style="margin:1rem 0"><table>
-      <thead><tr><th>Option</th><th>Best when</th><th>Offline V4.1-Flash?</th></tr></thead>
+    <h2>Heritage</h2>
+    <p>From the official Acknowledgments: DeepInfer was originally built primarily on <a href="https://github.com/vllm-project/vllm">vLLM</a>, with additional inspiration from <a href="https://github.com/sgl-project/sglang">SGLang</a> and <a href="https://github.com/NVIDIA/TensorRT-LLM">TensorRT-LLM</a>. That is lineage — not a claim that every vLLM feature is present.</p>
+
+    <h2>When to choose DeepInfer vs vLLM</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Option</th><th>Best when</th><th>Offline V4.1-Flash path?</th><th>Hardware gate</th></tr></thead>
       <tbody>
-        <tr><td><strong>DeepInfer</strong></td><td>SM100 / Ascend 950 + DeepSeek offline path</td><td class="yes">Yes</td></tr>
-        <tr><td><strong>vLLM / SGLang</strong></td><td>Broader model zoo or other accelerators</td><td class="partial">Depends</td></tr>
-        <tr><td><strong>Official API</strong></td><td>Hosted inference, no GPU ops</td><td class="no">Hosted</td></tr>
+        <tr><td><strong>DeepInfer</strong></td><td>You want DeepSeek’s open engine for V4.1-Flash offline on listed accelerators</td><td class="yes">Yes (primary)</td><td>SM100 / Ascend 950</td></tr>
+        <tr><td><strong>vLLM / SGLang</strong></td><td>Broader model zoo, other GPUs, or you already standardize on that stack</td><td class="partial">Depends on their support</td><td>Their matrix</td></tr>
+        <tr><td><strong>TensorRT-LLM</strong></td><td>NVIDIA-centric TRT pipelines</td><td class="partial">Different product</td><td>NVIDIA / TRT</td></tr>
+        <tr><td><strong>Official API</strong></td><td>Hosted inference; no GPU ops</td><td class="no">Hosted</td><td>N/A</td></tr>
       </tbody>
     </table></div>
-    <h2>Included in DeepInfer open source</h2>
-    <ul class="checklist"><li>Offline V4.1-Flash</li><li>Optimized kernels, DP/CP/EP</li><li>DSpark, SWA replay, async scheduling</li><li>Structured outputs</li></ul>
-    <h2>Not included vs a full serving stack</h2>
-    <ul class="checklist"><li>KV cache system</li><li>Complete PD disaggregation service</li><li>DP load balancing</li><li>Agents (DSH) or protocols (recipe)</li></ul>
-    <div class="callout"><strong>Prefill ≠ product.</strong> Two phases of one engine — <a href="/blog/prefill-decode-three-layers/">blog</a>.</div>
+
+    <h2>Feature checklist (DeepInfer OSS)</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Capability</th><th>In DeepInfer OSS?</th><th>Source note</th></tr></thead>
+      <tbody>
+        <tr><td>Offline DeepSeek-V4.1-Flash</td><td class="yes">Yes</td><td>README supported model</td></tr>
+        <tr><td>Optimized kernels (FlashMLA, DeepGEMM, DeepEP, …)</td><td class="yes">Yes</td><td>README feature details</td></tr>
+        <tr><td>Attention DP / balanced CP · MoE EP + EPLB</td><td class="yes">Yes</td><td>README</td></tr>
+        <tr><td>DSpark + confidence-scheduled verification</td><td class="yes">Yes</td><td>Env flags in README</td></tr>
+        <tr><td>SWA bounded replay · async scheduling · structured outputs</td><td class="yes">Yes</td><td>README</td></tr>
+        <tr><td>Batch-invariant / deterministic sampling (NVIDIA)</td><td class="yes">Yes</td><td>README</td></tr>
+        <tr><td>Full KV cache system</td><td class="no">No</td><td>Listed as required, not included</td></tr>
+        <tr><td>Complete VE/Prefill/Decode disagg serving</td><td class="no">No</td><td>Engine parts exist; service glue not released</td></tr>
+        <tr><td>DP load balancing for P/D replicas</td><td class="no">No</td><td>Listed as required, not included</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>What OSS does NOT include</h2>
+    <ul class="checklist">
+      <li>A turnkey multi-tenant online API with long-retention KV</li>
+      <li>Production Prefill/Decode disaggregation <em>service</em> (phases exist in one engine; full glue is out of tree)</li>
+      <li>DP load balancers for prefill and decode replicas</li>
+      <li>Agent runtime — that is <a href="https://dshbase.com/">DeepSeek Harness · dshbase.com</a></li>
+      <li>Protocol conversion alone — that is <a href="/recipe/">deepseek-recipe</a> (does not infer)</li>
+    </ul>
+
+    <div class="callout"><strong>Prefill ≠ separate product.</strong> Prefill and Decode are two phases of the same DeepInfer engine. Charts that show 4× SM100 (prefill) vs 64× SM100 (decode) are topology for benchmarks — not two installs. See <a href="/blog/prefill-vs-decode/">Prefill vs Decode</a>.</div>
+
+    
+    <h2>Capability comparison (guide synthesis)</h2>
+    <p>Community write-ups (e.g. WeChat capability roundups) often compare stacks along these axes. Treat as a <em>guide checklist</em>, not a vendor scorecard — always verify against live READMEs.</p>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Axis</th><th>DeepInfer OSS</th><th>vLLM</th><th>SGLang</th></tr></thead>
+      <tbody>
+        <tr><td>Primary focus</td><td>DeepSeek V4.1-Flash offline engine</td><td>Broad model zoo / general serving</td><td>Fast serving + structured workflows</td></tr>
+        <tr><td>Heritage</td><td>Built primarily on vLLM; inspired by SGLang &amp; TRT-LLM</td><td>Original project</td><td>Independent stack</td></tr>
+        <tr><td>Listed HW (DeepInfer README)</td><td>SM100 + Ascend 950</td><td>Wide NVIDIA (+ others via backends)</td><td>Wide NVIDIA focus</td></tr>
+        <tr><td>Offline kernels / EP-DP</td><td class="yes">Yes (FlashMLA-family, EP/DP/CP)</td><td class="yes">Yes (own kernels)</td><td class="yes">Yes</td></tr>
+        <tr><td>Full KV + PD service + DP LB</td><td class="no">Not in OSS</td><td class="partial">Serving features vary by version</td><td class="partial">Serving features vary</td></tr>
+        <tr><td>Official Docker (DeepInfer)</td><td class="no">None — community Dockerfile = example only</td><td class="partial">Project images common</td><td class="partial">Project images common</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Official Prefill / Decode charts</h2>
+    <p>From DeepInfer <code class="inline-code">doc/images/</code> (Apache-2.0). Measured on 4× SM100 (prefill) and 64× SM100 (decode) — same engine, two phases.</p>
+    <div class="chart-strip">
+      <figure class="figure">
+        <img src="/media/official_prefill_pareto.png" alt="Prefill Pareto: throughput vs latency" width="640" height="400" loading="lazy"/>
+        <figcaption>Prefill Pareto — source: DeepInfer doc/images/prefill_pareto.png</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="/media/official_decode_pareto.png" alt="Decode Pareto: throughput vs per-user speed" width="640" height="400" loading="lazy"/>
+        <figcaption>Decode Pareto — source: DeepInfer doc/images/decode_pareto.png</figcaption>
+      </figure>
+    </div>
+
+    <div class="related" style="margin-top:2rem">
+      <a class="card" href="/install/"><h3>Install</h3><p>SM100 / Ascend 950 path.</p></a>
+      <a class="card" href="/hardware/"><h3>Hardware</h3><p>Matrix + RFC table.</p></a>
+      <a class="card" href="/faq/"><h3>FAQ</h3><p>Env vars, eval, production attribution.</p></a>
+    </div>
   </div>
 </main>
 <footer class="site-footer">

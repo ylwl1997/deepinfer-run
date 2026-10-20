@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepInfer 对比 vLLM、SGLang、TensorRT-LLM | deepinfer.run</title>
-<meta name="description" content="DeepSeek DeepInfer 对比 vLLM、SGLang、TensorRT-LLM 与官方 API：V4.1-Flash 离线推理、FlashMLA 系算子、Attention DP / MoE EP，以及开源版本未包含项。"/>
+<title>DeepInfer 对比 vLLM — 渊源、清单、开源不含项 | deepinfer.run</title>
+<meta name="description" content="DeepInfer 对比 vLLM/SGLang/TRT-LLM：基于 vLLM 并受 SGLang/TRT-LLM 启发；功能清单；OSS 不含完整 KV/PD 分离/DP LB；Prefill ≠ 独立产品。"/>
 <link rel="canonical" href="https://deepinfer.run/zh/vs-vllm/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/vs-vllm/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="zh_CN"/>
 <meta property="og:url" content="https://deepinfer.run/zh/vs-vllm/"/>
-<meta property="og:title" content="DeepInfer 对比 vLLM、SGLang、TensorRT-LLM | deepinfer.run"/>
-<meta property="og:description" content="DeepSeek DeepInfer 对比 vLLM、SGLang、TensorRT-LLM 与官方 API：V4.1-Flash 离线推理、FlashMLA 系算子、Attention DP / MoE EP，以及开源版本未包含项。"/>
+<meta property="og:title" content="DeepInfer 对比 vLLM — 渊源、清单、开源不含项 | deepinfer.run"/>
+<meta property="og:description" content="DeepInfer 对比 vLLM/SGLang/TRT-LLM：基于 vLLM 并受 SGLang/TRT-LLM 启发；功能清单；OSS 不含完整 KV/PD 分离/DP LB；Prefill ≠ 独立产品。"/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepInfer 对比 vLLM、SGLang、TensorRT-LLM | deepinfer.run"/>
-<meta name="twitter:description" content="DeepSeek DeepInfer 对比 vLLM、SGLang、TensorRT-LLM 与官方 API：V4.1-Flash 离线推理、FlashMLA 系算子、Attention DP / MoE EP，以及开源版本未包含项。"/>
+<meta name="twitter:title" content="DeepInfer 对比 vLLM — 渊源、清单、开源不含项 | deepinfer.run"/>
+<meta name="twitter:description" content="DeepInfer 对比 vLLM/SGLang/TRT-LLM：基于 vLLM 并受 SGLang/TRT-LLM 启发；功能清单；OSS 不含完整 KV/PD 分离/DP LB；Prefill ≠ 独立产品。"/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -83,22 +83,88 @@ window.__GA_ID__ = 'G-W75JV8JJKH';
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/zh/">首页</a> / <a href="/zh/vs-vllm/">对比 vLLM</a></div>
     <h1>DeepInfer 对比 vLLM、SGLang 与 TensorRT-LLM</h1>
-    <p>上游致谢：主要基于 vLLM，并参考 SGLang 与 TensorRT-LLM。本页谈适配，不排名。</p>
+    <p>渊源、何时选哪套栈、功能清单，以及开源<strong>不包含</strong>什么。Prefill 不是独立产品。</p>
+    <div class="source-links">
+      <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">DeepInfer README</a>
+      <a href="https://github.com/vllm-project/vllm">vLLM</a>
+      <a href="/zh/blog/prefill-vs-decode/">Prefill vs Decode</a>
+    </div>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-<div class="table-wrap" style="margin:1rem 0"><table>
-      <thead><tr><th>选项</th><th>更适合</th><th>离线 V4.1-Flash？</th></tr></thead>
+    <h2>渊源</h2>
+    <p>官方 Acknowledgments：DeepInfer 最初主要基于 <a href="https://github.com/vllm-project/vllm">vLLM</a> 构建，并受到 <a href="https://github.com/sgl-project/sglang">SGLang</a> 与 <a href="https://github.com/NVIDIA/TensorRT-LLM">TensorRT-LLM</a> 启发。这是谱系说明——不等于拥有 vLLM 的全部特性。</p>
+
+    <h2>何时选 DeepInfer，何时选 vLLM</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>选项</th><th>适合场景</th><th>离线 V4.1-Flash 路径？</th><th>硬件门槛</th></tr></thead>
       <tbody>
-        <tr><td><strong>DeepInfer</strong></td><td>SM100 / Ascend 950 + DeepSeek 离线路径</td><td class="yes">是</td></tr>
-        <tr><td><strong>vLLM / SGLang</strong></td><td>更广模型面或其他加速器</td><td class="partial">视项目而定</td></tr>
-        <tr><td><strong>官方 API</strong></td><td>托管推理、无需自管 GPU</td><td class="no">托管</td></tr>
+        <tr><td><strong>DeepInfer</strong></td><td>要在已列加速器上跑 DeepSeek 开源引擎的 V4.1-Flash 离线推理</td><td class="yes">是（主路径）</td><td>SM100 / 昇腾 950</td></tr>
+        <tr><td><strong>vLLM / SGLang</strong></td><td>更广模型库、其他 GPU，或已统一该栈</td><td class="partial">取决于对方支持</td><td>其自身矩阵</td></tr>
+        <tr><td><strong>TensorRT-LLM</strong></td><td>NVIDIA 侧 TRT 流水线</td><td class="partial">另一产品</td><td>NVIDIA / TRT</td></tr>
+        <tr><td><strong>官方 API</strong></td><td>托管推理；无 GPU 运维</td><td class="no">托管</td><td>不适用</td></tr>
       </tbody>
     </table></div>
-    <h2>DeepInfer 开源包含</h2>
-    <ul class="checklist"><li>离线 V4.1-Flash</li><li>优化算子与 DP/CP/EP</li><li>DSpark、SWA replay、异步调度</li><li>结构化输出</li></ul>
-    <h2>相对完整服务栈：不包含</h2>
-    <ul class="checklist"><li>KV cache 系统</li><li>完整 PD 分离服务</li><li>DP 负载均衡</li><li>智能体（DSH）或协议（recipe）</li></ul>
-    <div class="callout"><strong>Prefill ≠ 独立产品。</strong>同一引擎的两个阶段 — <a href="/zh/blog/prefill-decode-three-layers/">博客</a>。</div>
+
+    <h2>功能清单（DeepInfer 开源）</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>能力</th><th>开源含？</th><th>依据</th></tr></thead>
+      <tbody>
+        <tr><td>离线 DeepSeek-V4.1-Flash</td><td class="yes">是</td><td>README 支持模型</td></tr>
+        <tr><td>优化算子（FlashMLA、DeepGEMM、DeepEP…）</td><td class="yes">是</td><td>README 特性说明</td></tr>
+        <tr><td>Attention DP / balanced CP · MoE EP + EPLB</td><td class="yes">是</td><td>README</td></tr>
+        <tr><td>DSpark + 置信度调度校验</td><td class="yes">是</td><td>README 环境变量</td></tr>
+        <tr><td>SWA bounded replay · 异步调度 · 结构化输出</td><td class="yes">是</td><td>README</td></tr>
+        <tr><td>Batch-invariant / 确定性采样（NVIDIA）</td><td class="yes">是</td><td>README</td></tr>
+        <tr><td>完整 KV cache 系统</td><td class="no">否</td><td>列为完整服务所需、未包含</td></tr>
+        <tr><td>完整 VE/Prefill/Decode 分离服务</td><td class="no">否</td><td>引擎侧多数已有；服务胶水未开源</td></tr>
+        <tr><td>P/D 副本的 DP 负载均衡</td><td class="no">否</td><td>列为所需、未包含</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>开源不包含什么</h2>
+    <ul class="checklist">
+      <li>开箱即用的多租户在线 API + 长保留 KV</li>
+      <li>生产级 Prefill/Decode 分离<strong>服务</strong>（同一引擎内存在两阶段；完整胶水在树外）</li>
+      <li>prefill / decode 副本的 DP 负载均衡器</li>
+      <li>智能体运行时 — 见 <a href="https://dshbase.com/">DeepSeek Harness · dshbase.com</a></li>
+      <li>仅协议转换 — 见 <a href="/zh/recipe/">deepseek-recipe</a>（不推理）</li>
+    </ul>
+
+    <div class="callout"><strong>Prefill ≠ 独立产品。</strong>Prefill 与 Decode 是同一 DeepInfer 引擎的两个阶段。4× SM100（prefill）与 64× SM100（decode）是基准拓扑，不是两次安装。见 <a href="/zh/blog/prefill-vs-decode/">Prefill vs Decode</a>。</div>
+
+    
+    <h2>能力对比（指南综合）</h2>
+    <p>社区文章常按下列维度对比各栈。此表是<strong>指南核对清单</strong>，不是厂商评分——请以各方最新 README 为准。</p>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>维度</th><th>DeepInfer 开源</th><th>vLLM</th><th>SGLang</th></tr></thead>
+      <tbody>
+        <tr><td>主焦点</td><td>DeepSeek V4.1-Flash 离线引擎</td><td>广模型库 / 通用服务</td><td>高速服务 + 结构化工作流</td></tr>
+        <tr><td>渊源</td><td>主要基于 vLLM；受 SGLang / TRT-LLM 启发</td><td>原项目</td><td>独立栈</td></tr>
+        <tr><td>DeepInfer README 硬件</td><td>SM100 + 昇腾 950</td><td>广泛 NVIDIA（及其他后端）</td><td>偏 NVIDIA</td></tr>
+        <tr><td>离线算子 / EP-DP</td><td class="yes">有（FlashMLA 系、EP/DP/CP）</td><td class="yes">有</td><td class="yes">有</td></tr>
+        <tr><td>完整 KV + PD 服务 + DP LB</td><td class="no">开源未含</td><td class="partial">视版本</td><td class="partial">视版本</td></tr>
+        <tr><td>官方 Docker（DeepInfer）</td><td class="no">无 — 社区 Dockerfile 仅为示例</td><td class="partial">常见项目镜像</td><td class="partial">常见项目镜像</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>官方 Prefill / Decode 曲线</h2>
+    <p>来自 DeepInfer <code class="inline-code">doc/images/</code>（Apache-2.0）。测于 4× SM100（prefill）与 64× SM100（decode）——同一引擎，两个阶段。</p>
+    <div class="chart-strip">
+      <figure class="figure">
+        <img src="/media/official_prefill_pareto.png" alt="Prefill Pareto" width="640" height="400" loading="lazy"/>
+        <figcaption>Prefill Pareto — 来源：DeepInfer doc/images/prefill_pareto.png</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="/media/official_decode_pareto.png" alt="Decode Pareto" width="640" height="400" loading="lazy"/>
+        <figcaption>Decode Pareto — 来源：DeepInfer doc/images/decode_pareto.png</figcaption>
+      </figure>
+    </div>
+
+    <div class="related" style="margin-top:2rem">
+      <a class="card" href="/zh/install/"><h3>安装</h3><p>SM100 / 昇腾 950 路径。</p></a>
+      <a class="card" href="/zh/hardware/"><h3>硬件</h3><p>矩阵 + RFC 表。</p></a>
+      <a class="card" href="/zh/faq/"><h3>FAQ</h3><p>环境变量、评测、生产数字归属。</p></a>
+    </div>
   </div>
 </main>
 <footer class="site-footer">

@@ -552,3 +552,42 @@ pre.code-block {
   font-size: 0.8rem;
   line-height: 1.55;
 }
+
+/* ——— Figures / media ——— */
+.figure {
+  margin: 1.35rem 0;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  background: #05070C;
+}
+.figure figcaption {
+  margin-top: 0.65rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.attr-box {
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(56, 189, 248, 0.06);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  margin: 1.25rem 0;
+  color: var(--secondary);
+}
+.attr-box strong { color: var(--text); }
+.chart-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.chart-strip .figure { margin: 0; }
+.prose .figure { max-width: 100%; }

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Hardware gate: SM100 & Ascend 950 Today; 910C & H20 Only RFCs | deepinfer.run</title>
+<meta name="description" content="DeepInfer hardware gate: SM100/Ascend 950 today; RFC #46 910C and #47 SM90/H20 capacity blockers; serving gaps; skip checklist."/>
+<link rel="canonical" href="https://deepinfer.run/blog/hardware-gate/"/>
+<meta name="robots" content="index,follow"/>
+<link rel="alternate" hreflang="en" href="https://deepinfer.run/blog/hardware-gate/"/>
+<link rel="alternate" hreflang="zh-Hans" href="https://deepinfer.run/zh/blog/hardware-gate/"/>
+<link rel="alternate" hreflang="x-default" href="https://deepinfer.run/blog/hardware-gate/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://deepinfer.run/blog/hardware-gate/"/>
+<meta property="og:title" content="Hardware gate: SM100 & Ascend 950 Today; 910C & H20 Only RFCs | deepinfer.run"/>
+<meta property="og:description" content="DeepInfer hardware gate: SM100/Ascend 950 today; RFC #46 910C and #47 SM90/H20 capacity blockers; serving gaps; skip checklist."/>
+<meta property="og:image" content="https://deepinfer.run/og.png"/>
+<meta property="og:site_name" content="DeepInfer"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Hardware gate: SM100 & Ascend 950 Today; 910C & H20 Only RFCs | deepinfer.run"/>
+<meta name="twitter:description" content="DeepInfer hardware gate: SM100/Ascend 950 today; RFC #46 910C and #47 SM90/H20 capacity blockers; serving gaps; skip checklist."/>
+<meta name="twitter:image" content="https://deepinfer.run/og.png"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: deepinfer.run measurement ID G-W75JV8JJKH (independent; never use dshbase GA). -->
+<script>
+window.__GA_ID__ = 'G-W75JV8JJKH';
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="logo" href="/">
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="nav" id="site-nav">
+      <a href="/install/">Install</a>
+      <a href="/hardware/">Hardware</a>
+      <a href="/blog/" aria-current="page">Blog</a>
+      <details class="nav-more">
+        <summary>More</summary>
+        <div class="nav-more-panel">
+          <a href="/vs-vllm/">vs vLLM</a>
+          <a href="/recipe/">Recipe</a>
+          <a href="/faq/">FAQ</a>
+        </div>
+      </details>
+    </nav>
+    <div class="nav-tools">
+      <div class="lang-switch" aria-label="Language">
+        <a href="https://deepinfer.run/blog/hardware-gate/" hreflang="en" aria-current="true">EN</a>
+        <a href="https://deepinfer.run/zh/blog/hardware-gate/" hreflang="zh-Hans">中文</a>
+      </div>
+      <a class="gh-btn" href="https://github.com/deepseek-ai/DeepInfer" title="DeepInfer" aria-label="DeepInfer on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero"><div class="wrap prose">
+    <div class="crumbs"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Hardware gate</div>
+    <h1>Hardware gate: SM100 &amp; Ascend 950 today; 910C &amp; H20 only RFCs</h1>
+    <p class="post-meta">2026-10-20 · <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">README</a> · <a href="https://github.com/deepseek-ai/DeepInfer/pull/46">#46</a> · <a href="https://github.com/deepseek-ai/DeepInfer/pull/47">#47</a></p>
+  </div></div>
+  <div class="wrap prose" style="padding-bottom:4rem">
+
+    <p>Turn the README accelerator list into a decision gate before <code class="inline-code">./build.sh</code>. Prefill and Decode stay two phases of one engine.</p>
+
+    <h2>Supported today</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Hardware</th><th>Software</th><th>Env</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>NVIDIA SM100</td><td>CUDA 13 · GCC ≥ 13 · Python 3.12 · Linux</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=nvidia</code></td><td class="yes">Supported</td></tr>
+        <tr><td>Huawei Ascend 950</td><td>CANN 9.2 · same host deps</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=ascend</code></td><td class="yes">Supported</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>910C &amp; H20 — draft RFCs only</h2>
+    <div class="callout warn"><strong>Not supported yet.</strong> Community RFCs propose expansion; do not install as if these SKUs were listed in the README.</div>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>RFC</th><th>Target</th><th>Capacity / blocker</th><th>Link</th></tr></thead>
+      <tbody>
+        <tr><td>#46</td><td>Ascend 910C/A3 · CANN 9.1 · offline-first</td><td>Platform expansion beyond 950 + CANN 9.2</td><td><a href="https://github.com/deepseek-ai/DeepInfer/pull/46">PR #46</a></td></tr>
+        <tr><td>#47</td><td>SM90 · 4× H20-3E (141&nbsp;GB)</td><td>FP4 fit ~499/564&nbsp;GB; need FP8 grouped GEMM; FlashMLA Hopper drop 2026.09.30</td><td><a href="https://github.com/deepseek-ai/DeepInfer/pull/47">PR #47</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Serving gaps</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Missing in OSS</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td>KV cache system</td><td>Online multi-turn / high QPS</td></tr>
+        <tr><td>VE/Prefill/Decode disaggregation service</td><td>Full glue not released</td></tr>
+        <tr><td>DP load balancing</td><td>Replica balance for P and D</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Skip checklist</h2>
+    <ul class="checklist">
+      <li>Confirm SM100 or Ascend 950 (else skip / watch RFCs)</li>
+      <li>Confirm CUDA 13 or CANN 9.2</li>
+      <li>Plan offline V4.1-Flash unless you bring serving glue</li>
+      <li>Agents → <a href="https://dshbase.com/">dshbase.com</a> · protocols → <a href="/recipe/">recipe</a></li>
+    </ul>
+    <p>Benchmark topology: Prefill 4× SM100 · Decode 64× SM100 (README). Next: <a href="/install/">install</a> · <a href="/hardware/">hardware</a>.</p>
+
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide footer-grid">
+    <div>
+      <a class="logo" href="/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
+      </a>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">Guide for DeepSeek DeepInfer and deepseek-recipe.</p>
+    </div>
+    <div>
+      <h4>Guide</h4>
+      <a href="/install/">Install</a>
+      <a href="/hardware/">Hardware</a>
+      <a href="/blog/">Blog</a>
+      <a href="/vs-vllm/">vs vLLM</a>
+      <a href="/recipe/">Recipe</a>
+      <a href="/faq/">FAQ</a>
+    </div>
+    <div>
+      <h4>Related</h4>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe</a>
+      <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
+      <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">DeepInfer note for DSH readers</a>
+    </div>
+  </div>
+  <div class="wrap-wide footer-note">
+    <p>Unofficial community guide · Not affiliated with DeepSeek</p>
+    <p>Upstream: DeepInfer (Apache-2.0) · deepseek-recipe (MIT). Prefill and Decode are two phases of the same engine.</p>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+<!-- Adsterra Social Bar ONLY — deepinfer.run SocialBar_1 / zone 31830530 / site 6136999.
+     Never use dshbase unit 3a79b35d… -->
+<script data-cfasync="false" src="https://bauval.org/14/f1ee1fe490192b0a856e617a2e113bc0"></script>
+</body></html>

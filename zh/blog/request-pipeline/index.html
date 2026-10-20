@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>一次请求如何跑完：生产系统 vs 开源 DeepInfer | deepinfer.run</title>
+<meta name="description" content="请求流水线：recipe → 缓存 → prefill → decode → DSpark。生产指标须标注归属；开源缺口；官方架构图。"/>
+<link rel="canonical" href="https://deepinfer.run/zh/blog/request-pipeline/"/>
+<meta name="robots" content="index,follow"/>
+<link rel="alternate" hreflang="en" href="https://deepinfer.run/blog/request-pipeline/"/>
+<link rel="alternate" hreflang="zh-Hans" href="https://deepinfer.run/zh/blog/request-pipeline/"/>
+<link rel="alternate" hreflang="x-default" href="https://deepinfer.run/blog/request-pipeline/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:locale" content="zh_CN"/>
+<meta property="og:url" content="https://deepinfer.run/zh/blog/request-pipeline/"/>
+<meta property="og:title" content="一次请求如何跑完：生产系统 vs 开源 DeepInfer | deepinfer.run"/>
+<meta property="og:description" content="请求流水线：recipe → 缓存 → prefill → decode → DSpark。生产指标须标注归属；开源缺口；官方架构图。"/>
+<meta property="og:image" content="https://deepinfer.run/og.png"/>
+<meta property="og:site_name" content="DeepInfer"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="一次请求如何跑完：生产系统 vs 开源 DeepInfer | deepinfer.run"/>
+<meta name="twitter:description" content="请求流水线：recipe → 缓存 → prefill → decode → DSpark。生产指标须标注归属；开源缺口；官方架构图。"/>
+<meta name="twitter:image" content="https://deepinfer.run/og.png"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
+<link rel="apple-touch-icon" href="/favicon-180.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/site.css"/>
+<!-- GA4: deepinfer.run measurement ID G-W75JV8JJKH (independent; never use dshbase GA). -->
+<script>
+window.__GA_ID__ = 'G-W75JV8JJKH';
+</script>
+<script>
+(function () {
+  var id = window.__GA_ID__;
+  if (!id || typeof id !== 'string' || id.indexOf('G-') !== 0) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id);
+})();
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="logo" href="/zh/">
+      <img src="/brand/mark.svg" width="26" height="26" alt=""/>
+      <span>DeepInfer</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
+    <nav class="nav" id="site-nav">
+      <a href="/zh/install/">安装</a>
+      <a href="/zh/hardware/">硬件</a>
+      <a href="/zh/blog/" aria-current="page">博客</a>
+      <details class="nav-more">
+        <summary>更多</summary>
+        <div class="nav-more-panel">
+          <a href="/zh/vs-vllm/">对比 vLLM</a>
+          <a href="/zh/recipe/">Recipe</a>
+          <a href="/zh/faq/">FAQ</a>
+        </div>
+      </details>
+    </nav>
+    <div class="nav-tools">
+      <div class="lang-switch" aria-label="Language">
+        <a href="https://deepinfer.run/blog/request-pipeline/" hreflang="en">EN</a>
+        <a href="https://deepinfer.run/zh/blog/request-pipeline/" hreflang="zh-Hans" aria-current="true">中文</a>
+      </div>
+      <a class="gh-btn" href="https://github.com/deepseek-ai/DeepInfer" title="DeepInfer" aria-label="DeepInfer on GitHub" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero"><div class="wrap prose">
+    <div class="crumbs"><a href="/zh/">首页</a> / <a href="/zh/blog/">博客</a> / 请求流水线</div>
+    <h1>一次请求如何跑完：生产系统 vs 开源 DeepInfer</h1>
+    <p class="post-meta">2026-10-20 · <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/doc/inference_deployment_qa.md">inference_deployment_qa.md</a></p>
+  </div></div>
+  <div class="wrap prose" style="padding-bottom:4rem">
+
+    <div class="attr-box"><strong>下列生产数字</strong>来自 DeepSeek 公开的推理部署 Q&amp;A / 解读文章，描述的是<strong>生产推理系统</strong>，不是单独安装开源 DeepInfer 的结果。</div>
+
+    <h2>架构总览</h2>
+    <figure class="figure">
+      <img src="/media/official_architecture_overview.png" alt="推理系统架构总览" loading="lazy"/>
+      <figcaption>官方架构图 — DeepInfer <code class="inline-code">doc/images/architecture_overview.png</code>（Apache-2.0）</figcaption>
+    </figure>
+
+    <h2>一次请求如何跑完（概念）</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>步骤</th><th>组件</th><th>发生什么</th><th>开源？</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>API / recipe</td><td>Messages · Chat Completions · Responses → Conversation → tokens</td><td class="partial">recipe 为独立 MIT 仓库</td></tr>
+        <tr><td>2</td><td>入口 / 缓存匹配</td><td>路由前做前缀 / KV 命中长度</td><td class="no">KV 存储未开源</td></tr>
+        <tr><td>3</td><td>Prefill 引擎</td><td>计算未缓存后缀；写入 KV</td><td class="partial">引擎有；服务胶水无</td></tr>
+        <tr><td>4</td><td>Decode 引擎</td><td>自回归出 token；Wide-EP MoE</td><td class="partial">引擎有；LB/分离无</td></tr>
+        <tr><td>5</td><td>采样 / DSpark</td><td>草稿 + 置信度调度校验</td><td class="yes">README 有开关</td></tr>
+        <tr><td>6</td><td>recipe 解析</td><td>token 流 → 协议事件（推理 / 工具 / 正文）</td><td class="partial">recipe 有</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>生产快照（必须标注归属）</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>指标</th><th>公开数值</th><th>标注</th></tr></thead>
+      <tbody>
+        <tr><td>集群 tokens/天</td><td>约 155 万亿</td><td>生产系统</td></tr>
+        <tr><td>低谷收入</td><td>约 38 美元 / GPU·小时</td><td>生产系统</td></tr>
+        <tr><td>平均输入 · 缓存命中</td><td>约 77K · 约 96%</td><td>生产系统</td></tr>
+        <tr><td>TTFT</td><td>平均约 400 ms</td><td>生产系统</td></tr>
+        <tr><td>Prefill 无缓存→有缓存</td><td>约 60k → 约 1.5M tok/s/GPU（约 25×）</td><td>生产系统</td></tr>
+        <tr><td>Decode · 用户速度</td><td>约 14k tok/s/GPU · 约 230 tok/s（代码约 300）</td><td>生产系统</td></tr>
+        <tr><td>高效单元</td><td>约 64P + 64D · P:D ≈ 1:1</td><td>生产 / Q&amp;A</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>开源缺口提示</h2>
+    <ul class="checklist">
+      <li>开源 DeepInfer：离线引擎 + 算子 + EP/DP/CP 示例</li>
+      <li>未包含：KV cache 系统、完整 PD 分离服务、DP 负载均衡</li>
+      <li>无官方 Docker 镜像 — 社区 Dockerfile 仅为示例</li>
+      <li>今日硬件：SM100（CUDA 13）· 昇腾 950（CANN 9.2）</li>
+    </ul>
+    <p>继续：<a href="/zh/install/">安装</a> · <a href="/zh/hardware/">硬件</a> · <a href="/zh/vs-vllm/">对比 vLLM</a> · <a href="/zh/recipe/">recipe</a> · <a href="/zh/faq/">FAQ</a>。</p>
+    <p class="post-meta">来源：<a href="https://github.com/deepseek-ai/DeepInfer/blob/main/doc/inference_deployment_qa.md">inference_deployment_qa.md</a> · README · 微信公开解读（改写）</p>
+
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide footer-grid">
+    <div>
+      <a class="logo" href="/zh/" style="margin-bottom:.6rem">
+        <img src="/brand/mark.svg" width="24" height="24" alt=""/>
+        <span>DeepInfer</span>
+      </a>
+      <p style="color:var(--secondary);font-size:.9rem;max-width:36ch;margin:.35rem 0 0">DeepSeek DeepInfer 与 deepseek-recipe 指南。</p>
+    </div>
+    <div>
+      <h4>指南</h4>
+      <a href="/zh/install/">安装</a>
+      <a href="/zh/hardware/">硬件</a>
+      <a href="/zh/blog/">博客</a>
+      <a href="/zh/vs-vllm/">对比 vLLM</a>
+      <a href="/zh/recipe/">Recipe</a>
+      <a href="/zh/faq/">FAQ</a>
+    </div>
+    <div>
+      <h4>相关</h4>
+      <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">DeepInfer</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe" rel="noopener">deepseek-recipe</a>
+      <a href="https://dshbase.com/">DeepSeek Harness · dshbase</a>
+      <a href="https://dshbase.com/zh/blog/deepinfer-open-source-dsh-readers/">给 DSH 读者的 DeepInfer 说明</a>
+    </div>
+  </div>
+  <div class="wrap-wide footer-note">
+    <p>非官方社区指南 · 与 DeepSeek 无隶属关系</p>
+    <p>上游：DeepInfer（Apache-2.0）· deepseek-recipe（MIT）。Prefill 与 Decode 是同一引擎的两个阶段。</p>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+<!-- Adsterra Social Bar ONLY — deepinfer.run SocialBar_1 / zone 31830530 / site 6136999.
+     Never use dshbase unit 3a79b35d… -->
+<script data-cfasync="false" src="https://bauval.org/14/f1ee1fe490192b0a856e617a2e113bc0"></script>
+</body></html>

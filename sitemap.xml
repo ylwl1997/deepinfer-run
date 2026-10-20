@@ -6,8 +6,12 @@
   <url><loc>https://deepinfer.run/vs-vllm/</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
   <url><loc>https://deepinfer.run/recipe/</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
   <url><loc>https://deepinfer.run/blog/</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
-  <url><loc>https://deepinfer.run/blog/hardware-gate-sm100-ascend/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://deepinfer.run/blog/prefill-decode-three-layers/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://deepinfer.run/blog/hardware-gate/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://deepinfer.run/blog/hardware-gate-sm100-ascend/</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://deepinfer.run/blog/prefill-vs-decode/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://deepinfer.run/blog/prefill-decode-three-layers/</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://deepinfer.run/blog/request-pipeline/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://deepinfer.run/blog/oss-scope/</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
   <url><loc>https://deepinfer.run/faq/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://deepinfer.run/zh/</loc><changefreq>weekly</changefreq><priority>0.95</priority></url>
   <url><loc>https://deepinfer.run/zh/install/</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
@@ -15,7 +19,11 @@
   <url><loc>https://deepinfer.run/zh/vs-vllm/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://deepinfer.run/zh/recipe/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://deepinfer.run/zh/blog/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://deepinfer.run/zh/blog/hardware-gate-sm100-ascend/</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
-  <url><loc>https://deepinfer.run/zh/blog/prefill-decode-three-layers/</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://deepinfer.run/zh/blog/hardware-gate/</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://deepinfer.run/zh/blog/hardware-gate-sm100-ascend/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://deepinfer.run/zh/blog/prefill-vs-decode/</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://deepinfer.run/zh/blog/prefill-decode-three-layers/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://deepinfer.run/zh/blog/request-pipeline/</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://deepinfer.run/zh/blog/oss-scope/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://deepinfer.run/zh/faq/</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
 </urlset>

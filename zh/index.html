@@ -134,7 +134,25 @@ window.__GA_ID__ = 'G-W75JV8JJKH';
     </table></div>
 </div></section>
 
+  
   <section class="section"><div class="wrap-wide">
+    <div class="section-head">
+      <h2>官方 Prefill / Decode 曲线</h2>
+      <p>来自 DeepInfer <code class="inline-code">doc/images/</code>。生产集群数字（155 万亿 tokens/天、$38/GPU·小时等）<strong>不是</strong>开源安装结果——见 <a href="/zh/faq/">FAQ 归属</a> 与 <a href="/zh/blog/request-pipeline/">请求流水线</a>。</p>
+    </div>
+    <div class="chart-strip">
+      <figure class="figure">
+        <img src="/media/official_prefill_pareto.png" alt="Prefill Pareto" loading="lazy"/>
+        <figcaption>Prefill Pareto · 4× SM100 拓扑（README）</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="/media/official_decode_pareto.png" alt="Decode Pareto" loading="lazy"/>
+        <figcaption>Decode Pareto · 64× SM100 拓扑（README）</figcaption>
+      </figure>
+    </div>
+  </div></section>
+
+<section class="section"><div class="wrap-wide">
     <div class="section-head">
       <h2>谁该跳过，谁适合安装</h2>
       <p>详见 <a href="/zh/hardware/">硬件门槛</a>。</p>

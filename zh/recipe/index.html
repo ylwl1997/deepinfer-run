@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>deepseek-recipe ≠ DeepInfer 引擎 — 协议与提示词 | deepinfer.run</title>
-<meta name="description" content="deepseek-recipe 不是 DeepInfer 推理引擎：面向 DeepSeek-V4.1-Flash 的协议、提示词与分词；需自备推理后端。MIT。"/>
+<title>deepseek-recipe ≠ DeepInfer — 协议层与 max_tokens 默认 | deepinfer.run</title>
+<meta name="description" content="deepseek-recipe 是协议层（不是 DeepInfer 引擎）：Python/Rust 安装、max_tokens 默认 8192/65536/131072，调用方提供推理+工具+HTTP。"/>
 <link rel="canonical" href="https://deepinfer.run/zh/recipe/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/recipe/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="zh_CN"/>
 <meta property="og:url" content="https://deepinfer.run/zh/recipe/"/>
-<meta property="og:title" content="deepseek-recipe ≠ DeepInfer 引擎 — 协议与提示词 | deepinfer.run"/>
-<meta property="og:description" content="deepseek-recipe 不是 DeepInfer 推理引擎：面向 DeepSeek-V4.1-Flash 的协议、提示词与分词；需自备推理后端。MIT。"/>
+<meta property="og:title" content="deepseek-recipe ≠ DeepInfer — 协议层与 max_tokens 默认 | deepinfer.run"/>
+<meta property="og:description" content="deepseek-recipe 是协议层（不是 DeepInfer 引擎）：Python/Rust 安装、max_tokens 默认 8192/65536/131072，调用方提供推理+工具+HTTP。"/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="deepseek-recipe ≠ DeepInfer 引擎 — 协议与提示词 | deepinfer.run"/>
-<meta name="twitter:description" content="deepseek-recipe 不是 DeepInfer 推理引擎：面向 DeepSeek-V4.1-Flash 的协议、提示词与分词；需自备推理后端。MIT。"/>
+<meta name="twitter:title" content="deepseek-recipe ≠ DeepInfer — 协议层与 max_tokens 默认 | deepinfer.run"/>
+<meta name="twitter:description" content="deepseek-recipe 是协议层（不是 DeepInfer 引擎）：Python/Rust 安装、max_tokens 默认 8192/65536/131072，调用方提供推理+工具+HTTP。"/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -83,26 +83,88 @@ window.__GA_ID__ = 'G-W75JV8JJKH';
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/zh/">首页</a> / <a href="/zh/recipe/">Recipe</a></div>
     <h1>deepseek-recipe ≠ DeepInfer 引擎</h1>
-    <p>协议与提示词——不是推理引擎。推理、工具与 HTTP 由调用方提供。</p>
+    <p>协议层：转换 API 请求、渲染提示词、编码 token、解析输出。<strong>不</strong>做推理。调用方需提供推理后端、工具执行与 HTTP。</p>
+    <div class="source-links">
+      <a href="https://github.com/deepseek-ai/deepseek-recipe">deepseek-recipe</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/README.md">README</a>
+      <a href="/zh/install/">DeepInfer 安装</a>
+    </div>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-<div class="table-wrap" style="margin:1rem 0"><table>
-      <thead><tr><th>组件</th><th>职责</th></tr></thead>
+    <h2>是 / 不是</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th></th><th>deepseek-recipe</th><th>DeepInfer</th></tr></thead>
       <tbody>
-        <tr><td><strong>deepseek-recipe</strong></td><td>请求 → 提示词 / token；输出 → 协议响应</td></tr>
-        <tr><td><strong>DeepInfer</strong></td><td>在加速器上执行推理</td></tr>
-        <tr><td><strong>你的服务</strong></td><td>HTTP、鉴权、工具、服务胶水</td></tr>
+        <tr><td><strong>是</strong></td><td>请求 → Conversation → 提示词 / token；输出 → Chat Completions / Responses / Messages</td><td>高性能推理引擎（开源离线路径面向 V4.1-Flash）</td></tr>
+        <tr><td><strong>不是</strong></td><td><em>不</em>加载权重、不跑算子</td><td><em>不</em>替代协议转换（请用 recipe 或自研胶水）</td></tr>
+        <tr><td><strong>调用方须提供</strong></td><td>模型推理 + 工具执行 + HTTP 传输</td><td>已支持加速器 + 构建环境</td></tr>
+        <tr><td><strong>许可证</strong></td><td>MIT</td><td>Apache-2.0</td></tr>
       </tbody>
     </table></div>
-    <h2>Python</h2>
+
+    <h2>协议面</h2>
+    <ul class="checklist">
+      <li>格式：Messages、Chat Completions、Responses — 流式与完整响应</li>
+      <li>提示词：DeepSeek V4 / V4.1 对话渲染 + tokenizer 编码</li>
+      <li>思考模式、reasoning effort、temperature、top_p、输出 token 上限</li>
+      <li>输出解析：推理内容、工具调用、JSON、停止序列</li>
+      <li>结构化输出：JSON Schema / regex（是否约束解码由调用方后端决定）</li>
+      <li>图像（V4.1）：base64 或 URL；V4 将图像替换为 <code class="inline-code">[Unsupported Image]</code></li>
+    </ul>
+
+    <h2>max_tokens 默认值</h2>
+    <p>依据 recipe README：编码后若请求未设 <code class="inline-code">max_tokens</code>，由 <code class="inline-code">ConversationRequest::resolve_max_tokens</code> 补默认：</p>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>模式</th><th>默认 max_tokens</th></tr></thead>
+      <tbody>
+        <tr><td>非思考</td><td><strong>8192</strong></td></tr>
+        <tr><td>思考</td><td><strong>65536</strong></td></tr>
+        <tr><td>思考 + <code class="inline-code">max</code> effort</td><td><strong>131072</strong></td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Python 安装</h2>
+    <p>Python 3.10+：</p>
     <pre class="code-block"><code>python3 -m pip install deepseek-recipe</code></pre>
     <pre class="code-block"><code>from deepseek_recipe import ChatCompletionRequest, ConversionOptions, DeepseekV41Encoding
-request = ChatCompletionRequest({"model":"DeepSeek-V4.1-Flash","messages":[{"role":"user","content":"你好"}]})
+
+request = ChatCompletionRequest({
+    "model": "DeepSeek-V4.1-Flash",
+    "messages": [{"role": "user", "content": "Hello"}],
+})
 converted = request.convert(ConversionOptions())
-print(DeepseekV41Encoding().render_conversation(converted.conversation).prompt)</code></pre>
-    <h2>Rust</h2>
+rendered = DeepseekV41Encoding().render_conversation(converted.conversation)
+print(rendered.prompt)</code></pre>
+
+    <h2>Rust 安装</h2>
     <pre class="code-block"><code>cargo add deepseek-recipe@0.2 deepseek-recipe-encoding@0.2 serde_json@1</code></pre>
-    <div class="callout"><strong>许可证：</strong>MIT。</div>
+    <p>源码构建与图像依赖见上游 <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/docs/development.md">development guide</a>。演示：<code class="inline-code">cargo run -p encoding-decoding-demo --locked</code> → <code class="inline-code">http://127.0.0.1:7778</code>。</p>
+
+    <h2>胶水说明</h2>
+    <ul class="checklist">
+      <li>单独使用 recipe 不会下载 DeepInfer 权重，也不会启动引擎</li>
+      <li>可接 DeepInfer 离线、其他后端，或官方 API</li>
+      <li>智能体 / harness → <a href="https://dshbase.com/">dshbase.com</a></li>
+      <li>仓库内示例：<code class="inline-code">server-rs</code>（Axum + mock）、<code class="inline-code">server-py</code>（FastAPI + mock）</li>
+    </ul>
+    
+    <h2>API 三件套（Messages · Chat Completions · Responses）</h2>
+    <p>依据 recipe README 与生产解读：共享一套 Conversation；适配器完成 Messages / Chat Completions / Responses 进出。控制特殊 token 按 ID 编码，用户文本里“长得像标签”的内容保持字面量，避免注入。流式解析用状态机跨 UTF-8 / DSML / 工具参数分片。</p>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>关注点</th><th>recipe 负责</th><th>调用方仍要做</th></tr></thead>
+      <tbody>
+        <tr><td>请求形态</td><td>三件套 → Conversation + 提示词 / tokens</td><td>HTTP 鉴权、限流</td></tr>
+        <tr><td>注入安全</td><td>特殊 token 按 ID；用户文本无法注入控制符</td><td>不可信图片 URL 的目标过滤</td></tr>
+        <tr><td>流式</td><td>增量解析推理 / 正文 / 工具</td><td>后端提供的 token 流</td></tr>
+        <tr><td>工具</td><td>把工具调用事件落到协议帧</td><td>真正执行工具</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="related" style="margin-top:2rem">
+      <a class="card" href="/zh/install/"><h3>DeepInfer 安装</h3><p>SM100 / 昇腾 950 引擎路径。</p></a>
+      <a class="card" href="/zh/vs-vllm/"><h3>对比 vLLM</h3><p>recipe 在栈中的位置。</p></a>
+      <a class="card" href="/zh/faq/"><h3>FAQ</h3><p>三层拆分。</p></a>
+    </div>
   </div>
 </main>
 <footer class="site-footer">

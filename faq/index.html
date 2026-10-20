@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepInfer FAQ — DSpark, SWA, FlashMLA, KV Cache Gaps | deepinfer.run</title>
-<meta name="description" content="DeepSeek DeepInfer FAQ: DSpark speculative decoding, SWA Bounded Replay, structured outputs, FlashMLA DeepGEMM DeepEP, why KV cache / Prefill-Decode disaggregation / load balancing are missing, deepseek-recipe ≠ engine."/>
+<title>DeepInfer FAQ — Env Vars, Eval Pass@1, Production Attribution | deepinfer.run</title>
+<meta name="description" content="DeepInfer FAQ: DEEPINFER_* env table, AIME/GPQA/HLE Pass@1, production 155T/$38 attribution box, OSS gaps, no official Docker."/>
 <link rel="canonical" href="https://deepinfer.run/faq/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/faq/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/faq/"/>
-<meta property="og:title" content="DeepInfer FAQ — DSpark, SWA, FlashMLA, KV Cache Gaps | deepinfer.run"/>
-<meta property="og:description" content="DeepSeek DeepInfer FAQ: DSpark speculative decoding, SWA Bounded Replay, structured outputs, FlashMLA DeepGEMM DeepEP, why KV cache / Prefill-Decode disaggregation / load balancing are missing, deepseek-recipe ≠ engine."/>
+<meta property="og:title" content="DeepInfer FAQ — Env Vars, Eval Pass@1, Production Attribution | deepinfer.run"/>
+<meta property="og:description" content="DeepInfer FAQ: DEEPINFER_* env table, AIME/GPQA/HLE Pass@1, production 155T/$38 attribution box, OSS gaps, no official Docker."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepInfer FAQ — DSpark, SWA, FlashMLA, KV Cache Gaps | deepinfer.run"/>
-<meta name="twitter:description" content="DeepSeek DeepInfer FAQ: DSpark speculative decoding, SWA Bounded Replay, structured outputs, FlashMLA DeepGEMM DeepEP, why KV cache / Prefill-Decode disaggregation / load balancing are missing, deepseek-recipe ≠ engine."/>
+<meta name="twitter:title" content="DeepInfer FAQ — Env Vars, Eval Pass@1, Production Attribution | deepinfer.run"/>
+<meta name="twitter:description" content="DeepInfer FAQ: DEEPINFER_* env table, AIME/GPQA/HLE Pass@1, production 155T/$38 attribution box, OSS gaps, no official Docker."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -84,45 +84,81 @@ window.__GA_ID__ = 'G-W75JV8JJKH';
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/">Home</a> / FAQ</div>
     <h1>DeepInfer FAQ</h1>
-    <p>Answers aligned with the <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">official DeepInfer README</a> — offline inference, kernels, and serving gaps.</p>
+    <p>Env vars, eval Pass@1, production-system numbers (attribution required), and OSS gaps — aligned with official README, eval/, and <code class="inline-code">doc/inference_deployment_qa.md</code>.</p>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-    <h2>DeepInfer vs deepseek-recipe vs DeepSeek Harness?</h2>
+    <div class="attr-box"><strong>Attribution — production vs OSS.</strong> Figures such as ~155 trillion tokens/day per cluster and ~US$38 per GPU-hour (valley) describe DeepSeek’s <em>production inference system</em> as published in <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/doc/inference_deployment_qa.md">doc/inference_deployment_qa.md</a> and related explainers. They are <strong>not</strong> what you automatically get after installing open-source DeepInfer. OSS is an offline engine release; KV store, full PD-disagg serving, and DP LB are not included.</div>
+
+    <h2>DeepInfer vs recipe vs Harness?</h2>
     <ul>
-      <li><strong>DeepInfer</strong> — open-source offline inference engine for DeepSeek-V4.1-Flash (Apache-2.0).</li>
-      <li><strong>deepseek-recipe</strong> — protocols / prompts / tokenization; <em>does not</em> run inference.</li>
-      <li><strong>DeepSeek Harness (DSH)</strong> — agent runtime · <a href="https://dshbase.com/">dshbase.com</a> · <a href="https://dshbase.com/blog/deepinfer-open-source-dsh-readers/">note for DSH readers</a>.</li>
+      <li><strong>DeepInfer</strong> — offline inference engine for DeepSeek-V4.1-Flash (Apache-2.0).</li>
+      <li><strong>deepseek-recipe</strong> — protocols / prompts / tokenization; does <em>not</em> infer.</li>
+      <li><strong>DeepSeek Harness (DSH)</strong> — agent runtime · <a href="https://dshbase.com/">dshbase.com</a>.</li>
     </ul>
 
-    <h2>What is DSpark (and speculative decoding)?</h2>
-    <p><strong>DSpark</strong> plus confidence-scheduled verification accelerates decoding with draft tokens and schedules verification by confidence. Enable with <code class="inline-code">DEEPINFER_ENABLE_MTP_VARLEN=1</code>; <code class="inline-code">DEEPINFER_USE_NEXTN_DECODE</code> sets max draft length (default 5).</p>
+    <h2>Environment variables (DEEPINFER_* + Ascend debug)</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Variable</th><th>Role</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td><code class="inline-code">DEEPINFER_ACCELERATOR</code></td><td><code class="inline-code">nvidia</code> or <code class="inline-code">ascend</code> — keep exported for build and run</td><td>README</td></tr>
+        <tr><td><code class="inline-code">DEEPINFER_HF_MODEL_DIR</code></td><td>Local checkpoint path instead of HF cache download</td><td>README</td></tr>
+        <tr><td><code class="inline-code">DEEPINFER_ENABLE_MTP_VARLEN</code></td><td>Enable DSpark / MTP varlen verification (set <code class="inline-code">1</code>)</td><td>README</td></tr>
+        <tr><td><code class="inline-code">DEEPINFER_USE_NEXTN_DECODE</code></td><td>Max draft length (default 5); set <code class="inline-code">0</code> to disable speculative decode</td><td>README / examples</td></tr>
+        <tr><td><code class="inline-code">DEEPINFER_YOCO_PREFILL_TRUNCATION_MODE</code></td><td>V4.1 default <code class="inline-code">compact</code> for SWA bounded replay</td><td>README</td></tr>
+        <tr><td><code class="inline-code">DEEPINFER_YOCO_PREFILL_KEEP_TOKENS</code></td><td>Default <code class="inline-code">140</code> retained suffix</td><td>README</td></tr>
+        <tr><td><code class="inline-code">DEEPINFER_BATCH_INVARIANT</code></td><td><code class="inline-code">1</code> batch-invariant (NVIDIA); pair with MTP off + fixed <code class="inline-code">seq_seed</code> for determinism</td><td>README</td></tr>
+        <tr><td><code class="inline-code">ASCEND_LAUNCH_BLOCKING</code></td><td>Sync ops for readable Ascend stack traces</td><td>examples/README</td></tr>
+        <tr><td><code class="inline-code">ASCEND_SLOG_PRINT_TO_STDOUT</code></td><td>Print CANN logs to stdout</td><td>examples/README</td></tr>
+      </tbody>
+    </table></div>
 
-    <h2>What is SWA Bounded Replay?</h2>
-    <p>Decoder <strong>SWA bounded replay</strong> reduces decoder prefill work by replaying only a bounded suffix. Default V4.1 settings in the README: <code class="inline-code">DEEPINFER_YOCO_PREFILL_TRUNCATION_MODE=compact</code> and <code class="inline-code">DEEPINFER_YOCO_PREFILL_KEEP_TOKENS=140</code>. The retained suffix must cover the SWA window plus max backtracking length.</p>
+    <h2>Eval Pass@1 (reference)</h2>
+    <p>From <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/eval/README.md">eval/README.md</a> — V4.1 reference under the documented default config. Stochastic; use as a sanity check.</p>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Benchmark</th><th>Pass@1</th></tr></thead>
+      <tbody>
+        <tr><td>AIME 2026</td><td><strong>99.9%</strong></td></tr>
+        <tr><td>GPQA Diamond</td><td><strong>93.4%</strong></td></tr>
+        <tr><td>HLE-Full</td><td><strong>42.6%</strong></td></tr>
+      </tbody>
+    </table></div>
 
-    <h2>Structured outputs?</h2>
-    <p>Constrain generation to a regex, JSON schema, or EBNF via <code class="inline-code">so_args</code> on <code class="inline-code">SamplingParams</code>. See upstream <code class="inline-code">examples/_structured_output.py</code>.</p>
+    <h2>Production system numbers (not OSS install outcomes)</h2>
+    <p>Values below are reported for DeepSeek’s production V4.1 Flash inference deployment / official Q&amp;A explainers. Cite the Q&amp;A; do not market them as OSS defaults.</p>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Fact</th><th>Value</th><th>Label</th></tr></thead>
+      <tbody>
+        <tr><td>Cluster throughput</td><td>~155 trillion tokens/day</td><td>Production system</td></tr>
+        <tr><td>Revenue (valley)</td><td>~US$38 / GPU-hour</td><td>Production system</td></tr>
+        <tr><td>Avg input / cache hit</td><td>~77K tokens · ~96% hit</td><td>Production system</td></tr>
+        <tr><td>TTFT</td><td>~400 ms average</td><td>Production system</td></tr>
+        <tr><td>Prefill (no-cache → with-cache)</td><td>~60k → ~1.5M tok/s/GPU (~25×)</td><td>Production system</td></tr>
+        <tr><td>Decode / user speed</td><td>~14k tok/s/GPU · ~230 tok/s user (code ~300)</td><td>Production system</td></tr>
+        <tr><td>Efficient unit</td><td>~64P + 64D GPUs · P:D ≈ 1:1</td><td>Production / Q&amp;A</td></tr>
+        <tr><td>Topology hint</td><td>Prefill often 8-GPU servers; Decode 64–128 GPU supernodes</td><td>Production / Q&amp;A</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><strong>DSpark table caveat.</strong> Confidence-scheduled vs fixed-5 gains in the Q&amp;A (e.g. roughly +4–7% around 60 conc/rank, up to ~+11% at higher concurrency in the published table) are from <strong>production / EP64·DP64 offline benchmark</strong> accounting — not a promise of your laptop build.</div>
 
-    <h2>Which kernels power DeepInfer?</h2>
-    <p>Optimized kernels listed upstream: <strong>FlashMLA</strong>, <strong>DeepGEMM</strong>, <strong>DeepEP</strong>, <strong>TileKernels</strong>, <strong>DeepSelect</strong>, and custom <strong>TileLang</strong> ops — plus Attention DP / balanced CP, MoE EP + EPLB.</p>
+    <h2>What is DSpark?</h2>
+    <p>Draft tokens + confidence-scheduled verification. Enable with <code class="inline-code">DEEPINFER_ENABLE_MTP_VARLEN=1</code>; draft length via <code class="inline-code">DEEPINFER_USE_NEXTN_DECODE</code> (default 5).</p>
 
-    <h2>Batch-invariant and deterministic sampling?</h2>
-    <p>Batch-invariant inference (<code class="inline-code">DEEPINFER_BATCH_INVARIANT=1</code>, NVIDIA only) keeps results identical across batch compositions. Deterministic sampling pairs that flag with <code class="inline-code">DEEPINFER_ENABLE_MTP_VARLEN=0</code> and a fixed <code class="inline-code">seq_seed</code>.</p>
+    <h2>SWA Bounded Replay?</h2>
+    <p>Replay a bounded decoder suffix. V4.1 README defaults: <code class="inline-code">compact</code> mode and <code class="inline-code">KEEP_TOKENS=140</code>. Production discussants also describe a 128-token SWA window and bounded replay of about the last 128 tokens — still one engine, two phases.</p>
 
-    <h2>Why are KV cache, Prefill/Decode disaggregation, and load balancing missing?</h2>
-    <p>The open-source release focuses on offline inference. Upstream explicitly lists what a complete inference service still needs: a <strong>KV cache system</strong>, <strong>VE/Prefill/Decode disaggregation</strong> (most engine functionality is implemented; full service glue is not), and <strong>load balancing</strong> across data-parallel replicas for both prefill and decode. Prefill and Decode remain two phases of the <em>same</em> DeepInfer engine — not separate products.</p>
+    <h2>Why missing KV / PD disagg / DP LB?</h2>
+    <p>OSS focuses on offline inference. A complete service still needs a KV cache system, VE/Prefill/Decode disaggregation service glue, and DP load balancing — listed upstream as not included.</p>
 
-    <h2>DeepInfer vs vLLM / SGLang / TensorRT-LLM?</h2>
-    <p>Acknowledgments: DeepInfer was built primarily on vLLM, with inspiration from SGLang and TensorRT-LLM. Use DeepInfer when you want DeepSeek’s V4.1-Flash offline path on SM100 / Ascend 950; see <a href="/vs-vllm/">vs vLLM</a>.</p>
-
-    <h2>Hardware and install?</h2>
-    <p>NVIDIA <strong>SM100</strong> (CUDA 13) and Huawei <strong>Ascend 950</strong> (CANN 9.2); set <code class="inline-code">DEEPINFER_ACCELERATOR</code>. Guides: <a href="/hardware/">hardware</a>, <a href="/install/">DeepInfer install</a>.</p>
+    <h2>Docker image?</h2>
+    <p><strong>No official Docker image</strong> in the README. Any Dockerfile you see on community blogs is a <em>community example</em> only — not an official DeepSeek artifact.</p>
 
     <h2>Medical deepinfer.org?</h2>
-    <p>Unrelated. Titles use «DeepSeek DeepInfer»; canonical host is deepinfer.run.</p>
+    <p>Unrelated. This guide is deepinfer.run.</p>
 
     <h2>License?</h2>
     <p>DeepInfer Apache-2.0 · deepseek-recipe MIT.</p>
+
+    <p class="post-meta" style="margin-top:2rem">Sources: <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">README</a> · <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/doc/inference_deployment_qa.md">inference_deployment_qa.md</a> · <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/eval/README.md">eval/README</a> · WeChat explainers (rewritten, not copied)</p>
   </div>
 </main>
 <footer class="site-footer">

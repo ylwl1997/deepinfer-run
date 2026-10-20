@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>deepseek-recipe ≠ DeepInfer Engine — Protocols & Prompts | deepinfer.run</title>
-<meta name="description" content="deepseek-recipe is not the DeepInfer inference engine: protocols, prompts, tokenization for DeepSeek-V4.1-Flash. Stack with DeepInfer or another backend. MIT."/>
+<title>deepseek-recipe ≠ DeepInfer — Protocols, max_tokens Defaults | deepinfer.run</title>
+<meta name="description" content="deepseek-recipe is the protocol layer (not the DeepInfer engine): Python/Rust install, max_tokens defaults 8192/65536/131072, caller provides inference+tools+HTTP."/>
 <link rel="canonical" href="https://deepinfer.run/recipe/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/recipe/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://deepinfer.run/recipe/"/>
-<meta property="og:title" content="deepseek-recipe ≠ DeepInfer Engine — Protocols & Prompts | deepinfer.run"/>
-<meta property="og:description" content="deepseek-recipe is not the DeepInfer inference engine: protocols, prompts, tokenization for DeepSeek-V4.1-Flash. Stack with DeepInfer or another backend. MIT."/>
+<meta property="og:title" content="deepseek-recipe ≠ DeepInfer — Protocols, max_tokens Defaults | deepinfer.run"/>
+<meta property="og:description" content="deepseek-recipe is the protocol layer (not the DeepInfer engine): Python/Rust install, max_tokens defaults 8192/65536/131072, caller provides inference+tools+HTTP."/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="deepseek-recipe ≠ DeepInfer Engine — Protocols & Prompts | deepinfer.run"/>
-<meta name="twitter:description" content="deepseek-recipe is not the DeepInfer inference engine: protocols, prompts, tokenization for DeepSeek-V4.1-Flash. Stack with DeepInfer or another backend. MIT."/>
+<meta name="twitter:title" content="deepseek-recipe ≠ DeepInfer — Protocols, max_tokens Defaults | deepinfer.run"/>
+<meta name="twitter:description" content="deepseek-recipe is the protocol layer (not the DeepInfer engine): Python/Rust install, max_tokens defaults 8192/65536/131072, caller provides inference+tools+HTTP."/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -83,26 +83,88 @@ window.__GA_ID__ = 'G-W75JV8JJKH';
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/">Home</a> / <a href="/recipe/">Recipe</a></div>
     <h1>deepseek-recipe ≠ DeepInfer engine</h1>
-    <p>Protocols and prompts — not inference. You provide the backend, tools, and HTTP.</p>
+    <p>Protocol layer: convert API requests, render prompts, encode tokens, parse outputs. It does <strong>not</strong> run inference. You provide the backend, tools, and HTTP.</p>
+    <div class="source-links">
+      <a href="https://github.com/deepseek-ai/deepseek-recipe">deepseek-recipe</a>
+      <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/README.md">README</a>
+      <a href="/install/">DeepInfer install</a>
+    </div>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-<div class="table-wrap" style="margin:1rem 0"><table>
-      <thead><tr><th>Piece</th><th>Role</th></tr></thead>
+    <h2>Is / is-not</h2>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th></th><th>deepseek-recipe</th><th>DeepInfer</th></tr></thead>
       <tbody>
-        <tr><td><strong>deepseek-recipe</strong></td><td>Request → prompt / tokens; output → protocol responses</td></tr>
-        <tr><td><strong>DeepInfer</strong></td><td>Model inference on accelerators</td></tr>
-        <tr><td><strong>Your service</strong></td><td>HTTP, auth, tools, serving glue</td></tr>
+        <tr><td><strong>Is</strong></td><td>Request → Conversation → prompt / token IDs; output → Chat Completions / Responses / Messages</td><td>High-performance inference engine (offline OSS path for V4.1-Flash)</td></tr>
+        <tr><td><strong>Is not</strong></td><td>Does <em>not</em> load weights or run kernels</td><td>Does <em>not</em> replace protocol conversion (use recipe or your own glue)</td></tr>
+        <tr><td><strong>Caller must provide</strong></td><td>Model inference + tool execution + HTTP transport</td><td>Supported accelerators + build env</td></tr>
+        <tr><td><strong>License</strong></td><td>MIT</td><td>Apache-2.0</td></tr>
       </tbody>
     </table></div>
-    <h2>Python</h2>
+
+    <h2>Protocol surface</h2>
+    <ul class="checklist">
+      <li>Formats: Messages, Chat Completions, Responses — streaming and complete</li>
+      <li>Prompts: DeepSeek V4 / V4.1 conversation rendering + tokenizer encoding</li>
+      <li>Thinking mode, reasoning effort, temperature, top_p, output token limits</li>
+      <li>Output parsing: reasoning, tool calls, JSON object, stop sequences</li>
+      <li>Structured output: JSON Schema / regex (caller decides if backend enforces constrained decoding)</li>
+      <li>Images (V4.1): base64 or URLs via image component; V4 replaces images with <code class="inline-code">[Unsupported Image]</code></li>
+    </ul>
+
+    <h2>max_tokens defaults</h2>
+    <p>From the recipe README: after encoding, <code class="inline-code">ConversationRequest::resolve_max_tokens</code> supplies defaults when the request sets none:</p>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Mode</th><th>Default max_tokens</th></tr></thead>
+      <tbody>
+        <tr><td>Non-thinking</td><td><strong>8192</strong></td></tr>
+        <tr><td>Thinking</td><td><strong>65536</strong></td></tr>
+        <tr><td>Thinking + <code class="inline-code">max</code> effort</td><td><strong>131072</strong></td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Python install</h2>
+    <p>Python 3.10+:</p>
     <pre class="code-block"><code>python3 -m pip install deepseek-recipe</code></pre>
     <pre class="code-block"><code>from deepseek_recipe import ChatCompletionRequest, ConversionOptions, DeepseekV41Encoding
-request = ChatCompletionRequest({"model":"DeepSeek-V4.1-Flash","messages":[{"role":"user","content":"Hello"}]})
+
+request = ChatCompletionRequest({
+    "model": "DeepSeek-V4.1-Flash",
+    "messages": [{"role": "user", "content": "Hello"}],
+})
 converted = request.convert(ConversionOptions())
-print(DeepseekV41Encoding().render_conversation(converted.conversation).prompt)</code></pre>
-    <h2>Rust</h2>
+rendered = DeepseekV41Encoding().render_conversation(converted.conversation)
+print(rendered.prompt)</code></pre>
+
+    <h2>Rust install</h2>
     <pre class="code-block"><code>cargo add deepseek-recipe@0.2 deepseek-recipe-encoding@0.2 serde_json@1</code></pre>
-    <div class="callout"><strong>License:</strong> MIT.</div>
+    <p>See upstream <a href="https://github.com/deepseek-ai/deepseek-recipe/blob/main/docs/development.md">development guide</a> for source builds and image dependencies. Demo: <code class="inline-code">cargo run -p encoding-decoding-demo --locked</code> → <code class="inline-code">http://127.0.0.1:7778</code>.</p>
+
+    <h2>Glue notes</h2>
+    <ul class="checklist">
+      <li>Recipe alone never downloads DeepInfer weights or starts an engine</li>
+      <li>Wire recipe in front of DeepInfer offline, another backend, or the official API</li>
+      <li>Agents / harness → <a href="https://dshbase.com/">dshbase.com</a> (not recipe, not this site’s install path)</li>
+      <li>Example servers in-repo: <code class="inline-code">server-rs</code> (Axum + mock inference), <code class="inline-code">server-py</code> (FastAPI + mock inference)</li>
+    </ul>
+    
+    <h2>API triad (Messages · Chat Completions · Responses)</h2>
+    <p>From the recipe README and production explainers: one Conversation format is shared; adapters map Messages / Chat Completions / Responses in and out. Special-token injection is blocked by encoding control tokens by ID while ordinary text that <em>looks</em> like tags stays literal. Streaming uses a state machine across UTF-8 / DSML / tool-argument chunk boundaries.</p>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>Concern</th><th>Recipe responsibility</th><th>Caller still owns</th></tr></thead>
+      <tbody>
+        <tr><td>Request shapes</td><td>Convert triad → Conversation + prompt / tokens</td><td>HTTP auth, rate limits</td></tr>
+        <tr><td>Injection safety</td><td>Special tokens by ID; user text cannot inject control tokens</td><td>Untrusted URL fetch filters for images</td></tr>
+        <tr><td>Streaming</td><td>Incremental parse of reasoning / body / tools</td><td>Inference token stream from your backend</td></tr>
+        <tr><td>Tools</td><td>Parse tool-call events into protocol frames</td><td>Actually execute tools</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="related" style="margin-top:2rem">
+      <a class="card" href="/install/"><h3>DeepInfer install</h3><p>Engine path on SM100 / Ascend 950.</p></a>
+      <a class="card" href="/vs-vllm/"><h3>vs vLLM</h3><p>Where recipe sits in the stack.</p></a>
+      <a class="card" href="/faq/"><h3>FAQ</h3><p>Three-layer split.</p></a>
+    </div>
   </div>
 </main>
 <footer class="site-footer">

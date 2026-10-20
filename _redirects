@@ -1,0 +1,10 @@
+# Short blog slugs already have real pages; keep long aliases as soft aliases via identical content.
+# Optional explicit redirects if someone hits without trailing slash:
+/blog/hardware-gate  /blog/hardware-gate/  301
+/blog/prefill-vs-decode  /blog/prefill-vs-decode/  301
+/blog/request-pipeline  /blog/request-pipeline/  301
+/blog/oss-scope  /blog/oss-scope/  301
+/zh/blog/hardware-gate  /zh/blog/hardware-gate/  301
+/zh/blog/prefill-vs-decode  /zh/blog/prefill-vs-decode/  301
+/zh/blog/request-pipeline  /zh/blog/request-pipeline/  301
+/zh/blog/oss-scope  /zh/blog/oss-scope/  301

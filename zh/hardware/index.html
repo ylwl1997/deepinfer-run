@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DeepInfer 硬件 — NVIDIA SM100 与华为昇腾 950 | deepinfer.run</title>
-<meta name="description" content="DeepInfer 硬件门槛：NVIDIA SM100（CUDA 13）、华为昇腾 950（CANN 9.2）、DEEPINFER_ACCELERATOR；离线推理缺口（KV cache、Prefill/Decode 分离、负载均衡）。"/>
+<title>DeepInfer 硬件 — 今日 SM100 与昇腾 950；910C/H20 仅 RFC | deepinfer.run</title>
+<meta name="description" content="DeepInfer 硬件矩阵：NVIDIA SM100（CUDA 13）、昇腾 950（CANN 9.2）、4×/64× SM100 基准拓扑、RFC #46 910C 与 #47 SM90/H20、服务缺口与跳过清单。"/>
 <link rel="canonical" href="https://deepinfer.run/zh/hardware/"/>
 <meta name="robots" content="index,follow"/>
 <link rel="alternate" hreflang="en" href="https://deepinfer.run/hardware/"/>
@@ -13,13 +13,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:locale" content="zh_CN"/>
 <meta property="og:url" content="https://deepinfer.run/zh/hardware/"/>
-<meta property="og:title" content="DeepInfer 硬件 — NVIDIA SM100 与华为昇腾 950 | deepinfer.run"/>
-<meta property="og:description" content="DeepInfer 硬件门槛：NVIDIA SM100（CUDA 13）、华为昇腾 950（CANN 9.2）、DEEPINFER_ACCELERATOR；离线推理缺口（KV cache、Prefill/Decode 分离、负载均衡）。"/>
+<meta property="og:title" content="DeepInfer 硬件 — 今日 SM100 与昇腾 950；910C/H20 仅 RFC | deepinfer.run"/>
+<meta property="og:description" content="DeepInfer 硬件矩阵：NVIDIA SM100（CUDA 13）、昇腾 950（CANN 9.2）、4×/64× SM100 基准拓扑、RFC #46 910C 与 #47 SM90/H20、服务缺口与跳过清单。"/>
 <meta property="og:image" content="https://deepinfer.run/og.png"/>
 <meta property="og:site_name" content="DeepInfer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DeepInfer 硬件 — NVIDIA SM100 与华为昇腾 950 | deepinfer.run"/>
-<meta name="twitter:description" content="DeepInfer 硬件门槛：NVIDIA SM100（CUDA 13）、华为昇腾 950（CANN 9.2）、DEEPINFER_ACCELERATOR；离线推理缺口（KV cache、Prefill/Decode 分离、负载均衡）。"/>
+<meta name="twitter:title" content="DeepInfer 硬件 — 今日 SM100 与昇腾 950；910C/H20 仅 RFC | deepinfer.run"/>
+<meta name="twitter:description" content="DeepInfer 硬件矩阵：NVIDIA SM100（CUDA 13）、昇腾 950（CANN 9.2）、4×/64× SM100 基准拓扑、RFC #46 910C 与 #47 SM90/H20、服务缺口与跳过清单。"/>
 <meta name="twitter:image" content="https://deepinfer.run/og.png"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"/>
@@ -82,43 +82,85 @@ window.__GA_ID__ = 'G-W75JV8JJKH';
 <main>
   <div class="page-hero"><div class="wrap prose">
     <div class="crumbs"><a href="/zh/">首页</a> / <a href="/zh/hardware/">硬件</a></div>
-    <h1>DeepInfer 硬件：SM100、昇腾 950、CUDA 13、CANN 9.2</h1>
-    <p>依据 <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">官方 README</a>。加速器不在列表中就不要强行编译。</p>
+    <h1>DeepInfer 硬件：今日 SM100 与昇腾 950</h1>
+    <p>支持矩阵、基准拓扑、未支持 SKU 的社区 RFC，以及服务缺口——均链接上游。Prefill 与 Decode 是<strong>同一引擎</strong>的两个阶段。</p>
+    <div class="source-links">
+      <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">README</a>
+      <a href="https://github.com/deepseek-ai/DeepInfer/pull/46">RFC #46 昇腾 910C</a>
+      <a href="https://github.com/deepseek-ai/DeepInfer/pull/47">RFC #47 SM90/H20</a>
+      <a href="/zh/blog/hardware-gate/">硬件门槛博文</a>
+    </div>
   </div></div>
   <div class="wrap prose" style="padding-bottom:4rem">
-<h2>支持硬件：NVIDIA SM100 与华为昇腾 950</h2>
+    <h2>今日支持矩阵</h2>
+    <p>仅依据 <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/README.md">官方 README</a>。SKU 不在列表中就不要强行编译。</p>
     <div class="table-wrap" style="margin:1rem 0"><table>
-      <thead><tr><th>加速器</th><th>厂商</th><th>工具链</th><th>环境变量</th></tr></thead>
+      <thead><tr><th>加速器</th><th>厂商</th><th>工具链</th><th>环境变量</th><th>状态</th></tr></thead>
       <tbody>
-        <tr><td><strong>SM100 GPU</strong></td><td>NVIDIA</td><td>CUDA 13</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=nvidia</code></td></tr>
-        <tr><td><strong>Ascend 950 NPU</strong></td><td>华为</td><td>CANN 9.2</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=ascend</code></td></tr>
+        <tr><td><strong>SM100 GPU</strong></td><td>NVIDIA</td><td>CUDA 13</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=nvidia</code></td><td class="yes">已支持</td></tr>
+        <tr><td><strong>Ascend 950 NPU</strong></td><td>华为</td><td>CANN 9.2</td><td><code class="inline-code">DEEPINFER_ACCELERATOR=ascend</code></td><td class="yes">已支持</td></tr>
+        <tr><td>Ascend 910C / A3</td><td>华为</td><td>CANN 9.1（提案）</td><td>—</td><td class="no">仅草稿 RFC · <a href="https://github.com/deepseek-ai/DeepInfer/pull/46">#46</a></td></tr>
+        <tr><td>SM90 / H20-3E</td><td>NVIDIA</td><td>—</td><td>—</td><td class="no">仅草稿 RFC · <a href="https://github.com/deepseek-ai/DeepInfer/pull/47">#47</a></td></tr>
       </tbody>
     </table></div>
-    <h2>软件前置</h2>
-    <ul class="checklist"><li>Linux</li><li>GCC ≥ 13.0</li><li>Python 3.12</li><li>CUDA 13 或 CANN 9.2</li></ul>
-    <h2>模型</h2>
-    <p><strong>DeepSeek-V4.1-Flash</strong> · 默认权重示例 <code class="inline-code">deepseek-ai/DeepSeek-V4.1-Flash-1017</code>。</p>
-    <h2>上游基准</h2>
-    <p>Prefill：4× SM100。Decode：64× SM100。各自在一个 scale-up 域内。复现见 <code class="inline-code">examples/sweep/run_sweep.sh</code>。</p>
-    <h2>服务缺口：KV cache、Prefill/Decode 分离、负载均衡</h2>
+    <ul class="checklist">
+      <li>Linux · GCC ≥ 13.0 · Python 3.12</li>
+      <li>模型：<strong>DeepSeek-V4.1-Flash</strong> · 默认权重 <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017"><code class="inline-code">deepseek-ai/DeepSeek-V4.1-Flash-1017</code></a></li>
+    </ul>
+
+    <h2>基准拓扑（同一引擎）</h2>
+    <p>README 性能图：在 <strong>4× SM100 测 Prefill</strong>、<strong>64× SM100 测 Decode</strong>——各自在一个 scale-up 域内。复现见 <a href="https://github.com/deepseek-ai/DeepInfer/blob/main/examples/sweep/run_sweep.sh"><code class="inline-code">examples/sweep/run_sweep.sh</code></a>。Prefill ≠ 独立产品。</p>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>阶段</th><th>拓扑（README）</th><th>测什么</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Prefill</strong></td><td>4× SM100 · 单一 scale-up 域</td><td>非缓存输入吞吐 vs 延迟</td></tr>
+        <tr><td><strong>Decode</strong></td><td>64× SM100 · 单一 scale-up 域</td><td>输出吞吐 vs 每用户速度</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>社区 RFC — 今日尚不支持</h2>
+    <div class="callout warn"><strong>仅为草稿 RFC。</strong>不要声称 910C、SM90 或 H20 已支持。实现尚未合入；请跟踪 PR。</div>
+    <div class="table-wrap" style="margin:1rem 0"><table>
+      <thead><tr><th>RFC</th><th>目标</th><th>范围 / 阻塞（摘自 PR）</th><th>链接</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>#46</strong></td>
+          <td>昇腾 910C / A3</td>
+          <td>单机离线优先；V4.1-Flash W8A8 + <strong>CANN 9.1</strong>；在线服务为后续阶段。今日文档路径仍是 <strong>950 + CANN 9.2</strong>。</td>
+          <td><a href="https://github.com/deepseek-ai/DeepInfer/pull/46">PR #46</a></td>
+        </tr>
+        <tr>
+          <td><strong>#47</strong></td>
+          <td>SM90 · 4× H20-3E（141&nbsp;GB）</td>
+          <td>原生 FP4 权重容量约 <strong>499&nbsp;GB / 564&nbsp;GB</strong>；需 dequant-fused FP8 grouped GEMM（SM90 无 FP4 tensor core）；Hopper 注意力 — FlashMLA 于 <strong>2026.09.30</strong> 移除 Hopper。</td>
+          <td><a href="https://github.com/deepseek-ai/DeepInfer/pull/47">PR #47</a></td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <h2>服务缺口（开源发行）</h2>
+    <p>README 列出完整推理服务仍缺的部分——<em>未</em>包含在本次开源中：</p>
     <div class="table-wrap" style="margin:1rem 0"><table>
       <thead><tr><th>缺失</th><th>为何重要</th></tr></thead>
       <tbody>
-        <tr><td>KV cache 系统</td><td>在线多轮 / 高 QPS</td></tr>
-        <tr><td>VE / Prefill / Decode 分离</td><td>完整服务胶水未开源</td></tr>
-        <tr><td>DP 负载均衡</td><td>prefill + decode 副本均衡</td></tr>
+        <tr><td>KV cache 系统</td><td>在线多轮 / 高 QPS 复用</td></tr>
+        <tr><td>VE / Prefill / Decode 分离</td><td>引擎侧多数能力已有；完整服务胶水未开源</td></tr>
+        <tr><td>DP 负载均衡</td><td>prefill 与 decode 副本均衡</td></tr>
       </tbody>
     </table></div>
-    <h2>跳过条件</h2>
+
+    <h2>跳过清单</h2>
     <ul class="checklist">
-      <li>既无 SM100 也无 Ascend 950</li>
-      <li>托管 API 已够用</li>
-      <li>需要智能体 → <a href="https://dshbase.com/">DSH</a></li>
-      <li>只需协议 → <a href="/zh/recipe/">recipe</a></li>
+      <li>既无 SM100 也无 Ascend 950 → 跳过安装；关注 RFC 或用托管 API</li>
+      <li>托管 Chat Completions 已够用 → 跳过自建</li>
+      <li>需要智能体 → <a href="https://dshbase.com/">DeepSeek Harness · dshbase.com</a></li>
+      <li>只需协议 / 提示词 → <a href="/zh/recipe/">deepseek-recipe</a></li>
+      <li>今日就要完整在线 KV + PD 服务 → OSS 未交付该栈</li>
     </ul>
     <div class="related" style="margin-top:2rem">
       <a class="card" href="/zh/install/"><h3>安装</h3><p>过门槛后的构建。</p></a>
-      <a class="card" href="/zh/blog/hardware-gate-sm100-ascend/"><h3>博客</h3><p>更长的硬件走读。</p></a>
+      <a class="card" href="/zh/blog/hardware-gate/"><h3>博客</h3><p>厚版硬件门槛走读。</p></a>
+      <a class="card" href="/zh/vs-vllm/"><h3>对比 vLLM</h3><p>何时换栈更合适。</p></a>
     </div>
   </div>
 </main>
